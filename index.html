@@ -478,20 +478,17 @@
         setProg(55, 'Forward pass…');
         await new Promise(r => setTimeout(r, 20));
 
-        // MODNet output key is 'output' not 'output_image'
-        const outputs = await currentModel({ input: pixel_values });
+        // ✅ Official MODNet API: { output } → output[0].mul(255).to('uint8')
+        const { output } = await currentModel({ input: pixel_values });
         setProg(78, 'Applying mask…');
         await new Promise(r => setTimeout(r, 20));
 
-        // Extract first tensor output, whichever key it is
-        const outKey = Object.keys(outputs)[0];
-        const tensor = outputs[outKey];
-        const outTensor = tensor.dims.length === 4 ? tensor[0] : tensor;
-
+        // output[0] is shape [1, H, W] — mul(255) directly, no sigmoid/squeeze needed
         const mask = await RawImage.fromTensor(
-          outTensor.squeeze().mul(255).to('uint8')
+          output[0].mul(255).to('uint8')
         ).resize(W, H);
 
+        // mask.data is Uint8Array, 1 channel per pixel
         for (let i = 0; i < W*H; i++) imgData.data[i*4+3] = mask.data[i];
       }
 
