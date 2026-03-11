@@ -1,255 +1,220 @@
-<!-- ═══════════════════════════════════════════════════════
-     AI Background Remover — Multi-Model — Blogger Embed
-     Models: RMBG-1.4 · MODNet (all browser-confirmed)
-     Paste in: Blogger > Layout > HTML/JavaScript Widget
-     ═══════════════════════════════════════════════════════ -->
+<!-- AI Background Remover — Blogger Embed — Responsive -->
 <style>
   #bgr-root {
     font-family: 'Segoe UI', system-ui, sans-serif;
-    background: #0f1117;
-    border-radius: 18px;
-    padding: 28px 20px 32px;
+    background: #f0ece4;
+    border-radius: 16px;
+    padding: clamp(16px, 4vw, 28px) clamp(12px, 4vw, 22px) clamp(20px, 4vw, 32px);
     max-width: 880px;
     margin: 0 auto;
-    color: #e2e8f0;
-    box-shadow: 0 0 0 1px #1e2a3a, 0 24px 64px rgba(0,0,0,.55);
+    color: #2d2a26;
+    width: 100%;
   }
   #bgr-root * { box-sizing: border-box; margin: 0; padding: 0; }
 
   /* ── header ── */
-  #bgr-root .bh { text-align: center; margin-bottom: 24px; }
+  #bgr-root .bh { text-align: center; margin-bottom: clamp(14px, 3vw, 22px); }
   #bgr-root .bh h2 {
-    font-size: 1.7rem; font-weight: 800; letter-spacing: -.03em;
-    background: linear-gradient(130deg, #a78bfa 0%, #34d399 100%);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    background-clip: text; margin-bottom: 5px;
+    font-size: clamp(1.2rem, 4vw, 1.6rem);
+    font-weight: 800; letter-spacing: -.02em; color: #2d2a26; margin-bottom: 5px;
   }
-  #bgr-root .bh p { font-size: 12px; color: #475569; line-height: 1.6; }
+  #bgr-root .bh p { font-size: clamp(11px, 2vw, 12px); color: #8a8070; line-height: 1.6; }
 
   /* ── model cards ── */
   #bgr-root .bcards {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 10px; margin-bottom: 18px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px; margin-bottom: 16px;
   }
-  @media(max-width:500px){ #bgr-root .bcards { grid-template-columns: 1fr; } }
+  @media(max-width: 560px) {
+    #bgr-root .bcards { grid-template-columns: 1fr; gap: 8px; }
+  }
 
   #bgr-root .bcard {
-    border: 1.5px solid #1e2a3a; border-radius: 12px;
-    padding: 13px 15px; cursor: pointer; transition: all .22s;
-    background: #141b27; position: relative; overflow: hidden;
+    border: 2px solid #ddd8ce; border-radius: 12px;
+    padding: clamp(10px, 2.5vw, 13px) clamp(10px, 2.5vw, 15px);
+    cursor: pointer; transition: all .2s; background: #fff;
   }
-  #bgr-root .bcard::before {
-    content: ''; position: absolute; inset: 0;
-    background: linear-gradient(135deg, rgba(124,58,237,.07), rgba(52,211,153,.04));
-    opacity: 0; transition: opacity .22s;
-  }
-  #bgr-root .bcard:hover { border-color: #7c3aed; }
-  #bgr-root .bcard:hover::before { opacity: 1; }
-  #bgr-root .bcard.active {
-    border-color: #7c3aed;
-    background: rgba(124,58,237,.1);
-    box-shadow: 0 0 0 1px rgba(124,58,237,.3);
-  }
-  #bgr-root .bcard.active::before { opacity: 1; }
+  #bgr-root .bcard:hover { border-color: #e8553a; }
+  #bgr-root .bcard.active { border-color: #e8553a; box-shadow: 0 0 0 3px rgba(232,85,58,.12); }
 
-  #bgr-root .bcard-top {
-    display: flex; align-items: center; gap: 10px; margin-bottom: 7px;
-  }
-  #bgr-root .bcard-icon { font-size: 22px; flex-shrink: 0; }
-  #bgr-root .bcard-name {
-    font-size: 13px; font-weight: 700; color: #e2e8f0; line-height: 1.2;
-  }
-  #bgr-root .bcard-name span {
-    font-size: 10px; font-weight: 400; color: #64748b;
-    font-family: monospace; display: block; margin-top: 2px;
-  }
+  #bgr-root .bcard-top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+  #bgr-root .bcard-icon { font-size: 18px; flex-shrink: 0; }
+  #bgr-root .bcard-name { font-size: clamp(12px, 2.5vw, 13px); font-weight: 700; color: #2d2a26; line-height: 1.2; }
+  #bgr-root .bcard-name span { font-size: 10px; font-weight: 400; color: #a09880; font-family: monospace; display: block; margin-top: 2px; }
   #bgr-root .bcard-badge {
-    margin-left: auto; font-size: 9px; font-weight: 700;
-    padding: 2px 7px; border-radius: 100px;
-    background: rgba(52,211,153,.12); color: #34d399;
-    border: 1px solid rgba(52,211,153,.2); white-space: nowrap;
+    font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 100px;
+    background: #e8553a; color: #fff; white-space: nowrap; flex-shrink: 0;
   }
-  #bgr-root .bcard-badge.purple {
-    background: rgba(124,58,237,.12); color: #a78bfa;
-    border-color: rgba(124,58,237,.25);
-  }
-  #bgr-root .bcard-desc { font-size: 11px; color: #475569; line-height: 1.5; }
+  #bgr-root .bcard-badge.alt { background: #f0ece4; color: #e8553a; border: 1px solid #e8553a; }
+  #bgr-root .bcard-desc { font-size: clamp(10px, 2vw, 11px); color: #7a7060; line-height: 1.5; }
   #bgr-root .bcard-size {
-    margin-top: 7px; font-size: 10px; font-family: monospace;
-    color: #334155; display: flex; align-items: center; gap: 5px;
+    margin-top: 6px; font-size: 10px; font-family: monospace;
+    color: #b0a898; display: flex; align-items: center; gap: 5px;
   }
   #bgr-root .bcard-size::before {
-    content: ''; display: inline-block;
-    width: 5px; height: 5px; border-radius: 50%;
-    background: #334155; flex-shrink: 0;
+    content: ''; display: inline-block; width: 5px; height: 5px;
+    border-radius: 50%; background: #d0c8bc; flex-shrink: 0;
   }
-  #bgr-root .bcard.active .bcard-size { color: #64748b; }
-  #bgr-root .bcard.active .bcard-size::before { background: #7c3aed; }
+  #bgr-root .bcard.active .bcard-size::before { background: #e8553a; }
 
   /* ── status ── */
   #bgr-root .bs {
     display: flex; align-items: center; gap: 10px;
-    background: #141b27; border: 1px solid #1e2a3a;
-    border-radius: 10px; padding: 10px 16px;
-    font-size: 11px; font-family: monospace; margin-bottom: 13px;
-    transition: border-color .3s;
+    background: #fff; border: 1.5px solid #ddd8ce;
+    border-radius: 10px; padding: 10px 14px;
+    font-size: clamp(10px, 2vw, 11px); font-family: monospace;
+    margin-bottom: 12px; transition: border-color .3s;
   }
-  #bgr-root .bs.ok  { border-color: rgba(52,211,153,.35); }
-  #bgr-root .bs.err { border-color: rgba(239,68,68,.35); }
+  #bgr-root .bs.ok  { border-color: #4caf7d; }
+  #bgr-root .bs.err { border-color: #e8553a; }
   #bgr-root .bd {
     width: 7px; height: 7px; border-radius: 50%;
-    background: #475569; flex-shrink: 0; transition: background .3s;
+    background: #c0b8ac; flex-shrink: 0; transition: background .3s;
   }
-  #bgr-root .bd.loading { background: #818cf8; animation: bp 1s infinite; }
-  #bgr-root .bd.ready   { background: #34d399; }
-  #bgr-root .bd.error   { background: #ef4444; }
+  #bgr-root .bd.loading { background: #e8553a; animation: bp 1s infinite; }
+  #bgr-root .bd.ready   { background: #4caf7d; }
+  #bgr-root .bd.error   { background: #e8553a; }
   @keyframes bp { 0%,100%{opacity:1} 50%{opacity:.3} }
-  #bgr-root .bt { color: #64748b; flex: 1; }
-  #bgr-root .bt.on { color: #e2e8f0; }
+  #bgr-root .bt { color: #a09880; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #bgr-root .bt.on { color: #2d2a26; }
 
   /* ── progress ── */
-  #bgr-root .bpw { margin-bottom: 13px; display: none; }
+  #bgr-root .bpw { margin-bottom: 12px; display: none; }
   #bgr-root .bpw.on { display: block; }
-  #bgr-root .bpb { background: #1e2a3a; border-radius: 99px; height: 3px; overflow: hidden; }
-  #bgr-root .bpf {
-    height: 100%; background: linear-gradient(90deg,#7c3aed,#a78bfa,#34d399);
-    background-size: 200%; border-radius: 99px;
-    width: 0; transition: width .4s ease; animation: bsh 2s linear infinite;
-  }
-  @keyframes bsh { 0%{background-position:200%} 100%{background-position:-200%} }
-  #bgr-root .bpl { font-size: 10px; color: #475569; font-family: monospace; text-align: right; margin-top: 4px; }
+  #bgr-root .bpb { background: #ddd8ce; border-radius: 99px; height: 4px; overflow: hidden; }
+  #bgr-root .bpf { height: 100%; background: #e8553a; border-radius: 99px; width: 0; transition: width .4s ease; }
+  #bgr-root .bpl { font-size: 10px; color: #a09880; font-family: monospace; text-align: right; margin-top: 4px; }
 
   /* ── drop ── */
   #bgr-root .bdrop {
-    border: 2px dashed #1e2a3a; border-radius: 14px;
-    padding: 36px 16px; text-align: center; cursor: pointer;
-    transition: all .22s; background: #0b1018; margin-bottom: 14px;
+    border: 2px dashed #c8c0b4; border-radius: 12px;
+    padding: clamp(22px, 5vw, 36px) 16px; text-align: center; cursor: pointer;
+    transition: all .2s; background: #e8e2d8; margin-bottom: 14px;
   }
-  #bgr-root .bdrop:hover,
-  #bgr-root .bdrop.over { border-color: #7c3aed; background: rgba(124,58,237,.04); }
-  #bgr-root .bdrop .bi { font-size: 36px; margin-bottom: 9px; display: block; }
-  #bgr-root .bdrop h3 { font-size: 14px; font-weight: 600; margin-bottom: 5px; }
-  #bgr-root .bdrop p { font-size: 12px; color: #475569; }
-  #bgr-root .bdrop p em { color: #a78bfa; font-style: normal; font-weight: 600; }
+  #bgr-root .bdrop:hover, #bgr-root .bdrop.over { border-color: #e8553a; background: #fdf5f2; }
+  #bgr-root .bdrop .bi { font-size: clamp(26px, 6vw, 34px); margin-bottom: 8px; display: block; }
+  #bgr-root .bdrop h3 { font-size: clamp(13px, 3vw, 14px); font-weight: 700; color: #e8553a; margin-bottom: 5px; }
+  #bgr-root .bdrop p { font-size: clamp(11px, 2.5vw, 12px); color: #8a8070; }
+  #bgr-root .bdrop p em { color: #e8553a; font-style: normal; font-weight: 600; }
 
   /* ── preview grid ── */
-  #bgr-root .bgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
-  @media(max-width:500px){ #bgr-root .bgrid { grid-template-columns: 1fr; } }
-
-  #bgr-root .bpane { background: #141b27; border: 1px solid #1e2a3a; border-radius: 12px; overflow: hidden; }
-  #bgr-root .bplbl {
-    padding: 7px 13px; border-bottom: 1px solid #1e2a3a;
-    font-size: 10px; font-family: monospace; letter-spacing: 1.5px;
-    text-transform: uppercase; color: #475569;
-    display: flex; align-items: center; justify-content: space-between;
+  #bgr-root .bgrid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 12px; margin-bottom: 16px;
   }
-  #bgr-root .bchip { font-size: 9px; padding: 2px 7px; border-radius: 4px; font-weight: 600; }
-  #bgr-root .bchip.p { background: rgba(129,140,248,.12); color: #818cf8; }
-  #bgr-root .bchip.g { background: rgba(52,211,153,.1); color: #34d399; }
+  @media(max-width: 560px) {
+    #bgr-root .bgrid { grid-template-columns: 1fr; gap: 10px; }
+  }
+
+  #bgr-root .bpane { background: #fff; border: 1.5px solid #ddd8ce; border-radius: 12px; overflow: hidden; }
+  #bgr-root .bplbl {
+    padding: 7px 12px; border-bottom: 1.5px solid #ede8e0;
+    font-size: 10px; font-family: monospace; letter-spacing: 1.5px;
+    text-transform: uppercase; color: #a09880;
+    display: flex; align-items: center; justify-content: space-between; background: #f8f5f0;
+  }
+  #bgr-root .bchip { font-size: 9px; padding: 2px 7px; border-radius: 4px; font-weight: 700; }
+  #bgr-root .bchip.p { background: #e8e2d8; color: #8a8070; }
+  #bgr-root .bchip.g { background: #e8553a; color: #fff; }
 
   #bgr-root .bview {
-    min-height: 185px; display: flex; align-items: center; justify-content: center;
-    background: repeating-conic-gradient(#111827 0% 25%,#1a2436 0% 50%) 0 0/14px 14px;
+    min-height: clamp(140px, 30vw, 200px);
+    display: flex; align-items: center; justify-content: center;
+    background: repeating-conic-gradient(#e8e2d8 0% 25%, #f5f0e8 0% 50%) 0 0/14px 14px;
   }
-  #bgr-root .bview img,
-  #bgr-root .bview canvas { max-width: 100%; max-height: 300px; display: block; object-fit: contain; }
-  #bgr-root .bph { color: #334155; font-size: 12px; text-align: center; padding: 14px; line-height: 1.6; }
+  #bgr-root .bview img, #bgr-root .bview canvas {
+    max-width: 100%; max-height: clamp(200px, 40vw, 300px);
+    display: block; object-fit: contain;
+  }
+  #bgr-root .bph { color: #c0b8ac; font-size: 12px; text-align: center; padding: 14px; line-height: 1.6; }
 
   /* ── buttons ── */
-  #bgr-root .brow { display: flex; gap: 9px; flex-wrap: wrap; }
+  #bgr-root .brow { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  @media(max-width: 400px) {
+    #bgr-root .brow { flex-direction: column; }
+    #bgr-root .brow button { width: 100%; justify-content: center; }
+  }
+
   #bgr-root button {
-    font-family: 'Segoe UI', system-ui, sans-serif; font-size: 13px; font-weight: 600;
-    border: none; border-radius: 9px; padding: 10px 19px; cursor: pointer;
-    transition: all .2s; display: inline-flex; align-items: center; gap: 7px;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: clamp(12px, 3vw, 13px); font-weight: 700;
+    border: none; border-radius: 8px;
+    padding: clamp(9px, 2.5vw, 11px) clamp(14px, 3vw, 20px);
+    cursor: pointer; transition: all .18s;
+    display: inline-flex; align-items: center; gap: 6px;
+    white-space: nowrap;
   }
-  #bgr-root #bgr-run {
-    background: linear-gradient(135deg,#6d28d9,#7c3aed); color: #fff;
-    box-shadow: 0 0 22px rgba(124,58,237,.25);
-  }
-  #bgr-root #bgr-run:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 26px rgba(124,58,237,.4); }
-  #bgr-root #bgr-run:disabled { opacity: .4; cursor: not-allowed; transform: none; box-shadow: none; }
-  #bgr-root #bgr-reset { background: #141b27; color: #e2e8f0; border: 1px solid #1e2a3a; }
-  #bgr-root #bgr-reset:hover:not(:disabled) { border-color: #818cf8; color: #a78bfa; }
-  #bgr-root #bgr-reset:disabled { opacity: .35; cursor: not-allowed; }
-  #bgr-root #bgr-dl {
-    background: rgba(52,211,153,.08); color: #34d399; border: 1px solid rgba(52,211,153,.2);
-  }
-  #bgr-root #bgr-dl:hover:not(:disabled) { background: rgba(52,211,153,.16); transform: translateY(-2px); }
-  #bgr-root #bgr-dl:disabled { opacity: .35; cursor: not-allowed; }
+  #bgr-root #bgr-run { background: #e8553a; color: #fff; box-shadow: 0 2px 8px rgba(232,85,58,.3); }
+  #bgr-root #bgr-run:hover:not(:disabled) { background: #d44a2f; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(232,85,58,.4); }
+  #bgr-root #bgr-run:disabled { opacity: .45; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  #bgr-root #bgr-reset { background: #fff; color: #5a5248; border: 1.5px solid #ddd8ce; }
+  #bgr-root #bgr-reset:hover:not(:disabled) { border-color: #e8553a; color: #e8553a; }
+  #bgr-root #bgr-reset:disabled { opacity: .4; cursor: not-allowed; }
+
+  #bgr-root #bgr-dl { background: #fff; color: #e8553a; border: 1.5px solid #e8553a; }
+  #bgr-root #bgr-dl:hover:not(:disabled) { background: #fdf5f2; transform: translateY(-1px); }
+  #bgr-root #bgr-dl:disabled { opacity: .4; cursor: not-allowed; }
 
   #bgr-root .bspin {
-    width: 13px; height: 13px; border: 2px solid rgba(255,255,255,.2);
-    border-top-color: #fff; border-radius: 50%;
-    animation: brot .65s linear infinite; display: none;
+    width: 13px; height: 13px; border: 2px solid rgba(255,255,255,.35);
+    border-top-color: #fff; border-radius: 50%; animation: brot .65s linear infinite; display: none;
   }
   #bgr-root #bgr-run.proc .bspin { display: block; }
   @keyframes brot { to { transform: rotate(360deg); } }
 
   /* ── credit ── */
-  #bgr-root .bcredit { text-align: center; margin-top: 18px; font-size: 10px; color: #334155; font-family: monospace; }
-  #bgr-root .bcredit a { color: #818cf8; text-decoration: none; }
+  #bgr-root .bcredit { text-align: center; margin-top: 18px; font-size: 10px; color: #b0a898; font-family: monospace; }
+  #bgr-root .bcredit a { color: #e8553a; text-decoration: none; }
   #bgr-root .bcredit a:hover { text-decoration: underline; }
 </style>
 
 <div id="bgr-root">
-  <!-- header -->
   <div class="bh">
     <h2>✂️ AI Background Remover</h2>
     <p>100% in-browser · No upload · No server · Choose your AI model below</p>
   </div>
 
-  <!-- model selector cards -->
   <div class="bcards" id="bgr-cards">
-
-    <div class="bcard active" data-model="briaai/RMBG-1.4" data-type="pipeline" data-size="~45 MB">
+    <div class="bcard active" data-model="briaai/RMBG-1.4" data-type="pipeline">
       <div class="bcard-top">
         <span class="bcard-icon">🎯</span>
-        <div class="bcard-name">
-          RMBG-1.4
-          <span>briaai/RMBG-1.4</span>
-        </div>
+        <div class="bcard-name">RMBG-1.4<span>briaai/RMBG-1.4</span></div>
         <span class="bcard-badge">Recommended</span>
       </div>
       <div class="bcard-desc">Best overall quality. Works great on any type of image — products, people, objects.</div>
       <div class="bcard-size">~45 MB · Cached after first load</div>
     </div>
-
-    <div class="bcard" data-model="Xenova/modnet" data-type="automodel" data-size="~25 MB">
+    <div class="bcard" data-model="Xenova/modnet" data-type="automodel">
       <div class="bcard-top">
         <span class="bcard-icon">🧑</span>
-        <div class="bcard-name">
-          MODNet
-          <span>Xenova/modnet</span>
-        </div>
-        <span class="bcard-badge purple">Portraits</span>
+        <div class="bcard-name">MODNet<span>Xenova/modnet</span></div>
+        <span class="bcard-badge alt">Portraits</span>
       </div>
       <div class="bcard-desc">Optimized for humans & portraits. Lighter model, fast processing, great for selfies.</div>
       <div class="bcard-size">~25 MB · Cached after first load</div>
     </div>
-
   </div>
 
-  <!-- status bar -->
   <div class="bs" id="bgr-s">
     <div class="bd loading" id="bgr-d"></div>
     <span class="bt on" id="bgr-t">Loading model…</span>
   </div>
 
-  <!-- progress -->
   <div class="bpw" id="bgr-pw">
     <div class="bpb"><div class="bpf" id="bgr-pf"></div></div>
     <div class="bpl" id="bgr-pl">0%</div>
   </div>
 
-  <!-- drop zone -->
   <div class="bdrop" id="bgr-drop">
     <input type="file" id="bgr-fi" accept="image/*" style="display:none"/>
     <span class="bi">🖼️</span>
-    <h3>Drop image here</h3>
-    <p>or <em>click to browse</em> &nbsp;·&nbsp; PNG · JPG · WEBP</p>
+    <h3>Drop images here or click to select</h3>
+    <p>PNG, JPG, WebP — <em>click to browse</em></p>
   </div>
 
-  <!-- preview -->
   <div class="bgrid">
     <div class="bpane">
       <div class="bplbl"><span>Original</span><span class="bchip p">INPUT</span></div>
@@ -261,7 +226,6 @@
     </div>
   </div>
 
-  <!-- action buttons -->
   <div class="brow">
     <button id="bgr-run" disabled><div class="bspin"></div><span>⚡ Remove Background</span></button>
     <button id="bgr-reset" disabled>🔄 Reset</button>
@@ -269,36 +233,29 @@
   </div>
 
   <div class="bcredit">
-    <a href="https://huggingface.co/briaai/RMBG-1.4" target="_blank">briaai/RMBG-1.4</a> &nbsp;·&nbsp;
-    <a href="https://huggingface.co/Xenova/modnet" target="_blank">Xenova/modnet</a> &nbsp;·&nbsp;
-    <a href="https://huggingface.co/docs/transformers.js" target="_blank">Transformers.js v3</a> &nbsp;·&nbsp;
-    Zero data upload
+    <a href="https://huggingface.co/briaai/RMBG-1.4" target="_blank">briaai/RMBG-1.4</a> ·
+    <a href="https://huggingface.co/Xenova/modnet" target="_blank">Xenova/modnet</a> ·
+    <a href="https://huggingface.co/docs/transformers.js" target="_blank">Transformers.js v3</a> · Zero upload
   </div>
 </div>
 
 <script type="module">
 (async () => {
-  // ── import ──────────────────────────────────────────────────────────────────
   const { pipeline, AutoModel, AutoProcessor, RawImage, env } = await import(
     'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.5.0/dist/transformers.min.js'
   );
   env.allowLocalModels = false;
 
-  // ── model registry — both browser-confirmed working ─────────────────────────
   const MODELS = {
     'briaai/RMBG-1.4': { type: 'pipeline', label: 'RMBG-1.4' },
     'Xenova/modnet':   { type: 'automodel', label: 'MODNet'   }
   };
 
-  // ── state ───────────────────────────────────────────────────────────────────
-  let currentPipe = null;       // for pipeline models
-  let currentModel = null;      // for AutoModel models
-  let currentProcessor = null;
+  let currentPipe = null, currentModel = null, currentProcessor = null;
   let currentModelId = 'briaai/RMBG-1.4';
   let srcFile = null, srcImg = null, outCanvas = null;
   let loading = false;
 
-  // ── refs ────────────────────────────────────────────────────────────────────
   const $ = id => document.getElementById(id);
   const drop = $('bgr-drop'), fi = $('bgr-fi');
   const runBtn = $('bgr-run'), resetBtn = $('bgr-reset'), dlBtn = $('bgr-dl');
@@ -306,7 +263,6 @@
   const pw = $('bgr-pw'), pf = $('bgr-pf'), pl = $('bgr-pl');
   const inView = $('bgr-in'), outView = $('bgr-out');
 
-  // ── helpers ─────────────────────────────────────────────────────────────────
   const setSt = (msg, state) => {
     stxt.textContent = msg; stxt.className = 'bt on';
     dot.className = 'bd ' + state;
@@ -321,44 +277,32 @@
   const progCb = info => {
     if (info.status === 'progress' && info.total) {
       const pct = Math.round(info.loaded / info.total * 82) + 5;
-      const mb  = (info.loaded / 1048576).toFixed(1);
-      const tot = (info.total  / 1048576).toFixed(1);
-      setProg(pct, `Downloading… ${mb} / ${tot} MB`);
+      setProg(pct, `Downloading… ${(info.loaded/1048576).toFixed(1)} / ${(info.total/1048576).toFixed(1)} MB`);
     }
     if (info.status === 'ready') setProg(95, 'Almost ready…');
   };
 
-  // ── load model ───────────────────────────────────────────────────────────────
   async function loadModel(id) {
     if (loading) return;
     loading = true;
     currentPipe = null; currentModel = null; currentProcessor = null;
     runBtn.disabled = true;
-
     const info = MODELS[id];
     setSt(`Loading ${info.label}… (cached after first download)`, 'loading');
     setProg(5, 'Starting…');
-
     try {
       if (info.type === 'pipeline') {
-        // ── RMBG-1.4: pipeline API ──────────────────────────────────────────
-        currentPipe = await pipeline('image-segmentation', id, {
-          device: 'wasm',
-          progress_callback: progCb
-        });
+        currentPipe = await pipeline('image-segmentation', id, { device: 'wasm', progress_callback: progCb });
       } else {
-        // ── MODNet: AutoModel API ───────────────────────────────────────────
         [currentModel, currentProcessor] = await Promise.all([
           AutoModel.from_pretrained(id, { device: 'wasm', dtype: 'fp32', progress_callback: progCb }),
           AutoProcessor.from_pretrained(id)
         ]);
       }
-
       setProg(100, 'Ready!');
       setTimeout(hideProg, 700);
       setSt(`${info.label} ready ✓ — drop an image to start`, 'ready');
       if (srcImg) runBtn.disabled = false;
-
     } catch(e) {
       console.error('[BGRemover] Load error:', e);
       setSt('Load failed: ' + e.message, 'error');
@@ -366,21 +310,18 @@
     } finally { loading = false; }
   }
 
-  // ── model card clicks ────────────────────────────────────────────────────────
   document.querySelectorAll('#bgr-cards .bcard').forEach(card => {
     card.addEventListener('click', () => {
       if (loading) return;
       document.querySelectorAll('#bgr-cards .bcard').forEach(c => c.classList.remove('active'));
       card.classList.add('active');
       currentModelId = card.dataset.model;
-      // clear output
       outView.innerHTML = '<div class="bph">Result will appear here</div>';
       outCanvas = null; dlBtn.disabled = true;
       loadModel(currentModelId);
     });
   });
 
-  // ── file upload ──────────────────────────────────────────────────────────────
   const handleFile = file => {
     if (!file || !file.type.startsWith('image/')) return;
     srcFile = file;
@@ -390,7 +331,7 @@
       srcImg = img;
       inView.innerHTML = '';
       const el = document.createElement('img');
-      el.src = url; el.style.maxHeight = '300px';
+      el.src = url; el.style.cssText = 'max-height:clamp(200px,40vw,300px);max-width:100%';
       inView.appendChild(el);
       outView.innerHTML = '<div class="bph">Press ⚡ Remove Background</div>';
       outCanvas = null; dlBtn.disabled = true;
@@ -404,25 +345,17 @@
   fi.addEventListener('change', e => handleFile(e.target.files[0]));
   drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('over'); });
   drop.addEventListener('dragleave', () => drop.classList.remove('over'));
-  drop.addEventListener('drop', e => {
-    e.preventDefault(); drop.classList.remove('over');
-    handleFile(e.dataTransfer.files[0]);
-  });
+  drop.addEventListener('drop', e => { e.preventDefault(); drop.classList.remove('over'); handleFile(e.dataTransfer.files[0]); });
 
-  // ── inference ────────────────────────────────────────────────────────────────
   runBtn.addEventListener('click', async () => {
     if (!(currentPipe || currentModel) || !srcImg || !srcFile) return;
-
     runBtn.classList.add('proc'); runBtn.disabled = true;
     resetBtn.disabled = true; dlBtn.disabled = true;
-
     const info = MODELS[currentModelId];
     setSt(`${info.label}: processing…`, 'loading');
     setProg(10, 'Preparing image…');
-
     try {
       await new Promise(r => setTimeout(r, 30));
-
       const W = srcImg.naturalWidth, H = srcImg.naturalHeight;
       outCanvas = document.createElement('canvas');
       outCanvas.width = W; outCanvas.height = H;
@@ -430,25 +363,15 @@
       ctx.drawImage(srcImg, 0, 0);
       const imgData = ctx.getImageData(0, 0, W, H);
 
-      let maskPixels; // Uint8Array, 1 value per pixel
-
-      // ────────────────────────────────────────────────────────────────────────
       if (info.type === 'pipeline') {
-        // RMBG-1.4 — pipeline API
         const objectUrl = URL.createObjectURL(srcFile);
         setProg(30, 'Running RMBG-1.4…');
         setSt('RMBG-1.4 segmentation…', 'loading');
         await new Promise(r => setTimeout(r, 20));
-
-        const result = await currentPipe(objectUrl, {
-          threshold: 0.5, mask_threshold: 0.5, overlap_mask_area_threshold: 0.8
-        });
+        const result = await currentPipe(objectUrl, { threshold: 0.5, mask_threshold: 0.5, overlap_mask_area_threshold: 0.8 });
         URL.revokeObjectURL(objectUrl);
-
         setProg(78, 'Applying mask…');
         await new Promise(r => setTimeout(r, 20));
-
-        // Scale mask → original size
         const maskImg = result[0].mask;
         const mc = document.createElement('canvas');
         mc.width = maskImg.width; mc.height = maskImg.height;
@@ -462,46 +385,31 @@
         const ms = document.createElement('canvas');
         ms.width = W; ms.height = H;
         ms.getContext('2d').drawImage(mc, 0, 0, W, H);
-        maskPixels = ms.getContext('2d').getImageData(0, 0, W, H).data;
-        // apply: use R channel
+        const maskPixels = ms.getContext('2d').getImageData(0, 0, W, H).data;
         for (let i = 0; i < W*H; i++) imgData.data[i*4+3] = maskPixels[i*4];
-
-      // ────────────────────────────────────────────────────────────────────────
       } else {
-        // MODNet — AutoModel API
         const rawImage = await RawImage.fromBlob(srcFile);
         setProg(30, 'Running MODNet…');
         setSt('MODNet segmentation…', 'loading');
         await new Promise(r => setTimeout(r, 20));
-
         const { pixel_values } = await currentProcessor(rawImage);
         setProg(55, 'Forward pass…');
         await new Promise(r => setTimeout(r, 20));
-
-        // ✅ Official MODNet API: { output } → output[0].mul(255).to('uint8')
         const { output } = await currentModel({ input: pixel_values });
         setProg(78, 'Applying mask…');
         await new Promise(r => setTimeout(r, 20));
-
-        // output[0] is shape [1, H, W] — mul(255) directly, no sigmoid/squeeze needed
-        const mask = await RawImage.fromTensor(
-          output[0].mul(255).to('uint8')
-        ).resize(W, H);
-
-        // mask.data is Uint8Array, 1 channel per pixel
+        const mask = await RawImage.fromTensor(output[0].mul(255).to('uint8')).resize(W, H);
         for (let i = 0; i < W*H; i++) imgData.data[i*4+3] = mask.data[i];
       }
 
       ctx.putImageData(imgData, 0, 0);
       setProg(100, 'Done!');
       setTimeout(hideProg, 600);
-
       outView.innerHTML = '';
-      outCanvas.style.cssText = 'max-height:300px;max-width:100%';
+      outCanvas.style.cssText = 'max-height:clamp(200px,40vw,300px);max-width:100%';
       outView.appendChild(outCanvas);
       dlBtn.disabled = false;
       setSt('Background removed ✓', 'ready');
-
     } catch(e) {
       console.error('[BGRemover] Inference error:', e);
       setSt('Error: ' + (e.message || String(e)), 'error');
@@ -513,7 +421,6 @@
     }
   });
 
-  // ── download ─────────────────────────────────────────────────────────────────
   dlBtn.addEventListener('click', () => {
     if (!outCanvas) return;
     const a = document.createElement('a');
@@ -522,18 +429,15 @@
     a.click();
   });
 
-  // ── reset ─────────────────────────────────────────────────────────────────────
   resetBtn.addEventListener('click', () => {
     srcImg = null; srcFile = null; outCanvas = null;
     inView.innerHTML  = '<div class="bph">No image loaded</div>';
     outView.innerHTML = '<div class="bph">Result will appear here</div>';
     fi.value = ''; runBtn.disabled = true; resetBtn.disabled = true; dlBtn.disabled = true;
     hideProg();
-    const hasModel = currentPipe || currentModel;
-    if (hasModel) setSt(MODELS[currentModelId].label + ' ready ✓ — drop an image to start', 'ready');
+    if (currentPipe || currentModel) setSt(MODELS[currentModelId].label + ' ready ✓ — drop an image to start', 'ready');
   });
 
-  // ── boot ──────────────────────────────────────────────────────────────────────
   loadModel(currentModelId);
 })();
 </script>
