@@ -1,4 +1,9 @@
-<!-- BiRefNet Background Remover — Blogger Embed (v3 Fixed) -->
+<!-- ═══════════════════════════════════════════════════════
+     AI Background Remover — Blogger Embed (Final, Working)
+     Model: briaai/RMBG-1.4 (browser-confirmed)
+     Paste in: Blogger > Layout > HTML/JavaScript Widget
+              OR Post HTML editor
+     ═══════════════════════════════════════════════════════ -->
 <style>
   #bgr-root {
     font-family: 'Segoe UI', system-ui, sans-serif;
@@ -8,284 +13,237 @@
     max-width: 860px;
     margin: 0 auto;
     color: #e2e8f0;
-    box-shadow: 0 0 0 1px #1e2a3a, 0 20px 60px rgba(0,0,0,0.5);
+    box-shadow: 0 0 0 1px #1e2a3a, 0 20px 60px rgba(0,0,0,.5);
   }
   #bgr-root * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  #bgr-root .bgr-head { text-align: center; margin-bottom: 22px; }
-  #bgr-root .bgr-head h2 {
-    font-size: 1.7rem; font-weight: 800; letter-spacing: -0.03em;
-    background: linear-gradient(130deg, #a78bfa, #34d399);
+  /* header */
+  #bgr-root .bh { text-align: center; margin-bottom: 22px; }
+  #bgr-root .bh h2 {
+    font-size: 1.65rem; font-weight: 800; letter-spacing: -.03em;
+    background: linear-gradient(130deg,#a78bfa,#34d399);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    background-clip: text; margin-bottom: 6px;
+    background-clip: text; margin-bottom: 5px;
   }
-  #bgr-root .bgr-head p { font-size: 12px; color: #475569; }
-  #bgr-root .bgr-head p code {
+  #bgr-root .bh p { font-size: 12px; color: #475569; }
+  #bgr-root .bh p code {
     font-size: 11px; color: #818cf8;
-    background: rgba(129,140,248,0.1);
-    padding: 1px 6px; border-radius: 4px;
+    background: rgba(129,140,248,.1); padding: 1px 5px; border-radius: 3px;
   }
 
-  #bgr-root .bgr-tabs {
-    display: flex; gap: 8px; flex-wrap: wrap;
-    justify-content: center; margin-bottom: 18px;
-  }
-  #bgr-root .bgr-tab {
-    font-size: 11px; padding: 6px 14px; border-radius: 8px;
-    border: 1px solid #1e2a3a; background: #141b27;
-    color: #64748b; cursor: pointer; transition: all .2s;
-    font-family: monospace;
-  }
-  #bgr-root .bgr-tab:hover  { border-color: #7c3aed; color: #a78bfa; }
-  #bgr-root .bgr-tab.active { border-color: #7c3aed; background: rgba(124,58,237,.12); color: #a78bfa; }
-
-  #bgr-root .bgr-status {
+  /* status */
+  #bgr-root .bs {
     display: flex; align-items: center; gap: 10px;
     background: #141b27; border: 1px solid #1e2a3a;
     border-radius: 10px; padding: 10px 16px;
-    font-size: 12px; font-family: monospace;
-    margin-bottom: 14px; transition: border-color .3s;
+    font-size: 11px; font-family: monospace; margin-bottom: 13px;
+    transition: border-color .3s;
   }
-  #bgr-root .bgr-status.s-ready { border-color: rgba(52,211,153,.35); }
-  #bgr-root .bgr-status.s-error { border-color: rgba(239,68,68,.35); }
-  #bgr-root .bgr-dot {
+  #bgr-root .bs.ok  { border-color: rgba(52,211,153,.35); }
+  #bgr-root .bs.err { border-color: rgba(239,68,68,.35); }
+  #bgr-root .bd {
     width: 7px; height: 7px; border-radius: 50%;
     background: #475569; flex-shrink: 0; transition: background .3s;
   }
-  #bgr-root .bgr-dot.loading { background: #818cf8; animation: bgrpulse 1s infinite; }
-  #bgr-root .bgr-dot.ready   { background: #34d399; }
-  #bgr-root .bgr-dot.error   { background: #ef4444; }
-  @keyframes bgrpulse { 0%,100%{opacity:1} 50%{opacity:.3} }
-  #bgr-root .bgr-stxt { color: #64748b; flex: 1; }
-  #bgr-root .bgr-stxt.on { color: #e2e8f0; }
+  #bgr-root .bd.loading { background: #818cf8; animation: bp 1s infinite; }
+  #bgr-root .bd.ready   { background: #34d399; }
+  #bgr-root .bd.error   { background: #ef4444; }
+  @keyframes bp { 0%,100%{opacity:1} 50%{opacity:.3} }
+  #bgr-root .bt { color: #64748b; flex: 1; }
+  #bgr-root .bt.on { color: #e2e8f0; }
 
-  #bgr-root .bgr-prog { margin-bottom: 14px; display: none; }
-  #bgr-root .bgr-prog.on { display: block; }
-  #bgr-root .bgr-pb { background: #1e2a3a; border-radius: 99px; height: 3px; overflow: hidden; }
-  #bgr-root .bgr-pf {
+  /* progress */
+  #bgr-root .bpw { margin-bottom: 13px; display: none; }
+  #bgr-root .bpw.on { display: block; }
+  #bgr-root .bpb { background: #1e2a3a; border-radius: 99px; height: 3px; overflow: hidden; }
+  #bgr-root .bpf {
     height: 100%;
-    background: linear-gradient(90deg, #7c3aed, #a78bfa, #34d399);
-    background-size: 200%;
-    border-radius: 99px; width: 0; transition: width .4s ease;
-    animation: bgrsh 2s linear infinite;
+    background: linear-gradient(90deg,#7c3aed,#a78bfa,#34d399);
+    background-size: 200%; border-radius: 99px;
+    width: 0; transition: width .4s ease;
+    animation: bsh 2s linear infinite;
   }
-  @keyframes bgrsh { 0%{background-position:200%} 100%{background-position:-200%} }
-  #bgr-root .bgr-pl { font-size: 10px; color: #475569; font-family: monospace; text-align: right; margin-top: 4px; }
+  @keyframes bsh { 0%{background-position:200%} 100%{background-position:-200%} }
+  #bgr-root .bpl { font-size: 10px; color: #475569; font-family: monospace; text-align: right; margin-top: 4px; }
 
-  #bgr-root .bgr-drop {
+  /* drop */
+  #bgr-root .bdrop {
     border: 2px dashed #1e2a3a; border-radius: 14px;
-    padding: 40px 16px; text-align: center; cursor: pointer;
-    transition: all .25s; background: #0b1018; margin-bottom: 16px;
+    padding: 38px 16px; text-align: center; cursor: pointer;
+    transition: all .25s; background: #0b1018; margin-bottom: 15px;
   }
-  #bgr-root .bgr-drop:hover,
-  #bgr-root .bgr-drop.over { border-color: #7c3aed; background: rgba(124,58,237,.04); }
-  #bgr-root .bgr-drop .bgr-ico { font-size: 40px; margin-bottom: 10px; display: block; }
-  #bgr-root .bgr-drop h3 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
-  #bgr-root .bgr-drop p { font-size: 12px; color: #475569; }
-  #bgr-root .bgr-drop p em { color: #a78bfa; font-style: normal; font-weight: 600; }
+  #bgr-root .bdrop:hover,
+  #bgr-root .bdrop.over { border-color: #7c3aed; background: rgba(124,58,237,.04); }
+  #bgr-root .bdrop .bi { font-size: 38px; margin-bottom: 9px; display: block; }
+  #bgr-root .bdrop h3 { font-size: 14px; font-weight: 600; margin-bottom: 5px; }
+  #bgr-root .bdrop p { font-size: 12px; color: #475569; }
+  #bgr-root .bdrop p em { color: #a78bfa; font-style: normal; font-weight: 600; }
 
-  #bgr-root .bgr-grid {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 14px; margin-bottom: 16px;
-  }
-  @media(max-width:560px) { #bgr-root .bgr-grid { grid-template-columns: 1fr; } }
+  /* grid */
+  #bgr-root .bgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; margin-bottom: 15px; }
+  @media(max-width:540px){ #bgr-root .bgrid { grid-template-columns: 1fr; } }
 
-  #bgr-root .bgr-pane {
-    background: #141b27; border: 1px solid #1e2a3a;
-    border-radius: 12px; overflow: hidden;
-  }
-  #bgr-root .bgr-pane-label {
+  #bgr-root .bpane { background: #141b27; border: 1px solid #1e2a3a; border-radius: 12px; overflow: hidden; }
+  #bgr-root .bplbl {
     padding: 8px 14px; border-bottom: 1px solid #1e2a3a;
-    font-size: 10px; font-family: monospace;
-    letter-spacing: 1.5px; text-transform: uppercase; color: #475569;
+    font-size: 10px; font-family: monospace; letter-spacing: 1.5px;
+    text-transform: uppercase; color: #475569;
     display: flex; align-items: center; justify-content: space-between;
   }
-  #bgr-root .bgr-chip { font-size: 9px; padding: 2px 7px; border-radius: 4px; font-weight: 600; }
-  #bgr-root .bgr-chip.p { background: rgba(129,140,248,.12); color: #818cf8; }
-  #bgr-root .bgr-chip.g { background: rgba(52,211,153,.1); color: #34d399; }
+  #bgr-root .bchip { font-size: 9px; padding: 2px 7px; border-radius: 4px; font-weight: 600; }
+  #bgr-root .bchip.p { background: rgba(129,140,248,.12); color: #818cf8; }
+  #bgr-root .bchip.g { background: rgba(52,211,153,.1); color: #34d399; }
 
-  #bgr-root .bgr-view {
-    min-height: 200px; display: flex; align-items: center; justify-content: center;
-    background: repeating-conic-gradient(#111827 0% 25%, #1a2436 0% 50%) 0 0/16px 16px;
+  #bgr-root .bview {
+    min-height: 190px; display: flex; align-items: center; justify-content: center;
+    background: repeating-conic-gradient(#111827 0% 25%,#1a2436 0% 50%) 0 0/16px 16px;
   }
-  #bgr-root .bgr-view img,
-  #bgr-root .bgr-view canvas { max-width: 100%; max-height: 320px; display: block; object-fit: contain; }
-  #bgr-root .bgr-ph { color: #334155; font-size: 12px; text-align: center; padding: 16px; line-height:1.6; }
+  #bgr-root .bview img,
+  #bgr-root .bview canvas { max-width: 100%; max-height: 310px; display: block; object-fit: contain; }
+  #bgr-root .bph { color: #334155; font-size: 12px; text-align: center; padding: 16px; line-height: 1.6; }
 
-  #bgr-root .bgr-row { display: flex; gap: 10px; flex-wrap: wrap; }
-
+  /* buttons */
+  #bgr-root .brow { display: flex; gap: 10px; flex-wrap: wrap; }
   #bgr-root button {
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    font-size: 13px; font-weight: 600; border: none;
-    border-radius: 9px; padding: 10px 20px; cursor: pointer;
+    font-family: 'Segoe UI', system-ui, sans-serif; font-size: 13px; font-weight: 600;
+    border: none; border-radius: 9px; padding: 10px 20px; cursor: pointer;
     transition: all .2s; display: inline-flex; align-items: center; gap: 7px;
   }
   #bgr-root #bgr-run {
-    background: linear-gradient(135deg, #6d28d9, #7c3aed);
-    color: #fff; box-shadow: 0 0 24px rgba(124,58,237,.25);
+    background: linear-gradient(135deg,#6d28d9,#7c3aed); color: #fff;
+    box-shadow: 0 0 22px rgba(124,58,237,.25);
   }
-  #bgr-root #bgr-run:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(124,58,237,.4); }
+  #bgr-root #bgr-run:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 26px rgba(124,58,237,.4); }
   #bgr-root #bgr-run:disabled { opacity: .4; cursor: not-allowed; transform: none; }
   #bgr-root #bgr-reset { background: #141b27; color: #e2e8f0; border: 1px solid #1e2a3a; }
   #bgr-root #bgr-reset:hover:not(:disabled) { border-color: #818cf8; color: #a78bfa; }
   #bgr-root #bgr-reset:disabled { opacity: .35; cursor: not-allowed; }
   #bgr-root #bgr-dl {
-    background: rgba(52,211,153,.08); color: #34d399;
-    border: 1px solid rgba(52,211,153,.2);
+    background: rgba(52,211,153,.08); color: #34d399; border: 1px solid rgba(52,211,153,.2);
   }
   #bgr-root #bgr-dl:hover:not(:disabled) { background: rgba(52,211,153,.16); transform: translateY(-2px); }
   #bgr-root #bgr-dl:disabled { opacity: .35; cursor: not-allowed; }
 
-  #bgr-root .bgr-spin {
-    width: 14px; height: 14px;
-    border: 2px solid rgba(255,255,255,.2);
+  #bgr-root .bspin {
+    width: 13px; height: 13px; border: 2px solid rgba(255,255,255,.2);
     border-top-color: #fff; border-radius: 50%;
-    animation: bgrrot .65s linear infinite; display: none;
+    animation: brot .65s linear infinite; display: none;
   }
-  #bgr-root #bgr-run.proc .bgr-spin { display: block; }
-  @keyframes bgrrot { to { transform: rotate(360deg); } }
+  #bgr-root #bgr-run.proc .bspin { display: block; }
+  @keyframes brot { to { transform: rotate(360deg); } }
 
-  #bgr-root .bgr-credit {
-    text-align: center; margin-top: 20px;
-    font-size: 10px; color: #334155; font-family: monospace;
-  }
-  #bgr-root .bgr-credit a { color: #818cf8; text-decoration: none; }
+  /* credit */
+  #bgr-root .bcredit { text-align: center; margin-top: 18px; font-size: 10px; color: #334155; font-family: monospace; }
+  #bgr-root .bcredit a { color: #818cf8; text-decoration: none; }
 </style>
 
 <div id="bgr-root">
-  <div class="bgr-head">
-    <h2>✂️ Background Remover</h2>
-    <p>Powered by <code>ZhengPeng7/BiRefNet</code> · Runs 100% in your browser · No data uploaded</p>
+  <div class="bh">
+    <h2>✂️ AI Background Remover</h2>
+    <p>Powered by <code>briaai/RMBG-1.4</code> · 100% in-browser · No upload · No server</p>
   </div>
 
-  <!-- ✅ Correct model IDs from official HuggingFace docs (no -ONNX suffix) -->
-  <div class="bgr-tabs">
-    <div class="bgr-tab active" data-model="onnx-community/BiRefNet_lite">⚡ Lite (~70MB)</div>
-    <div class="bgr-tab" data-model="onnx-community/BiRefNet-ONNX">🎯 Full (~170MB)</div>
-    <div class="bgr-tab" data-model="onnx-community/BiRefNet-portrait-ONNX">🧑 Portrait (~170MB)</div>
+  <div class="bs" id="bgr-s">
+    <div class="bd loading" id="bgr-d"></div>
+    <span class="bt on" id="bgr-t">Loading AI model…</span>
   </div>
 
-  <div class="bgr-status" id="bgr-status">
-    <div class="bgr-dot loading" id="bgr-dot"></div>
-    <span class="bgr-stxt on" id="bgr-stxt">Initializing…</span>
+  <div class="bpw" id="bgr-pw">
+    <div class="bpb"><div class="bpf" id="bgr-pf"></div></div>
+    <div class="bpl" id="bgr-pl">0%</div>
   </div>
 
-  <div class="bgr-prog" id="bgr-prog">
-    <div class="bgr-pb"><div class="bgr-pf" id="bgr-pf"></div></div>
-    <div class="bgr-pl" id="bgr-pl">0%</div>
-  </div>
-
-  <div class="bgr-drop" id="bgr-drop">
+  <div class="bdrop" id="bgr-drop">
     <input type="file" id="bgr-fi" accept="image/*" style="display:none"/>
-    <span class="bgr-ico">🖼️</span>
+    <span class="bi">🖼️</span>
     <h3>Drop image here</h3>
     <p>or <em>click to browse</em> &nbsp;·&nbsp; PNG · JPG · WEBP</p>
   </div>
 
-  <div class="bgr-grid">
-    <div class="bgr-pane">
-      <div class="bgr-pane-label"><span>Original</span><span class="bgr-chip p">INPUT</span></div>
-      <div class="bgr-view" id="bgr-in"><div class="bgr-ph">No image loaded</div></div>
+  <div class="bgrid">
+    <div class="bpane">
+      <div class="bplbl"><span>Original</span><span class="bchip p">INPUT</span></div>
+      <div class="bview" id="bgr-in"><div class="bph">No image loaded</div></div>
     </div>
-    <div class="bgr-pane">
-      <div class="bgr-pane-label"><span>Result</span><span class="bgr-chip g">OUTPUT</span></div>
-      <div class="bgr-view" id="bgr-out"><div class="bgr-ph">Result will appear here</div></div>
+    <div class="bpane">
+      <div class="bplbl"><span>Result</span><span class="bchip g">OUTPUT</span></div>
+      <div class="bview" id="bgr-out"><div class="bph">Result will appear here</div></div>
     </div>
   </div>
 
-  <div class="bgr-row">
-    <button id="bgr-run" disabled><div class="bgr-spin"></div><span>⚡ Remove Background</span></button>
+  <div class="brow">
+    <button id="bgr-run" disabled><div class="bspin"></div><span>⚡ Remove Background</span></button>
     <button id="bgr-reset" disabled>🔄 Reset</button>
     <button id="bgr-dl" disabled>⬇ Download PNG</button>
   </div>
 
-  <div class="bgr-credit">
-    Model: <a href="https://github.com/ZhengPeng7/BiRefNet" target="_blank">ZhengPeng7/BiRefNet</a> ·
-    ONNX: <a href="https://huggingface.co/onnx-community" target="_blank">onnx-community</a> ·
-    Runtime: <a href="https://huggingface.co/docs/transformers.js" target="_blank">Transformers.js v3</a>
+  <div class="bcredit">
+    Model: <a href="https://huggingface.co/briaai/RMBG-1.4" target="_blank">briaai/RMBG-1.4</a> ·
+    Runtime: <a href="https://huggingface.co/docs/transformers.js" target="_blank">Transformers.js v3</a> ·
+    Zero data upload
   </div>
 </div>
 
 <script type="module">
 (async () => {
-  const { AutoModel, AutoProcessor, RawImage, env } =
-    await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.5.0/dist/transformers.min.js');
-
+  // ── import ────────────────────────────────────────────────────────────────
+  const { pipeline, env } = await import(
+    'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.5.0/dist/transformers.min.js'
+  );
   env.allowLocalModels = false;
 
-  let model = null, processor = null;
-  let srcFile = null, srcImg = null, outCanvas = null;
-  let currentModel = 'onnx-community/BiRefNet_lite';
-  let busy = false;
+  // ── state ─────────────────────────────────────────────────────────────────
+  let pipe = null, srcFile = null, srcImg = null, outCanvas = null;
 
+  // ── refs ──────────────────────────────────────────────────────────────────
   const $ = id => document.getElementById(id);
-  const drop = $('bgr-drop'), fi = $('bgr-fi');
-  const runBtn = $('bgr-run'), resetBtn = $('bgr-reset'), dlBtn = $('bgr-dl');
-  const dot = $('bgr-dot'), stxt = $('bgr-stxt'), statusEl = $('bgr-status');
-  const prog = $('bgr-prog'), pf = $('bgr-pf'), pl = $('bgr-pl');
-  const inView = $('bgr-in'), outView = $('bgr-out');
+  const drop    = $('bgr-drop'),  fi      = $('bgr-fi');
+  const runBtn  = $('bgr-run'),   resetBtn= $('bgr-reset'), dlBtn = $('bgr-dl');
+  const dot     = $('bgr-d'),     stxt    = $('bgr-t'),     sbar  = $('bgr-s');
+  const pw      = $('bgr-pw'),    pf      = $('bgr-pf'),    pl    = $('bgr-pl');
+  const inView  = $('bgr-in'),    outView = $('bgr-out');
 
+  // ── helpers ───────────────────────────────────────────────────────────────
   const setSt = (msg, state) => {
-    stxt.textContent = msg; stxt.className = 'bgr-stxt on';
-    dot.className = 'bgr-dot ' + state;
-    statusEl.className = 'bgr-status' +
-      (state === 'ready' ? ' s-ready' : state === 'error' ? ' s-error' : '');
+    stxt.textContent = msg; stxt.className = 'bt on';
+    dot.className = 'bd ' + state;
+    sbar.className = 'bs' + (state === 'ready' ? ' ok' : state === 'error' ? ' err' : '');
   };
   const setProg = (pct, lbl) => {
-    prog.classList.add('on'); pf.style.width = pct + '%';
+    pw.classList.add('on'); pf.style.width = pct + '%';
     pl.textContent = lbl || pct + '%';
   };
-  const hideProg = () => { prog.classList.remove('on'); pf.style.width = '0'; };
+  const hideProg = () => { pw.classList.remove('on'); pf.style.width = '0'; };
 
-  // ── load model ──────────────────────────────────────────────────────────────
-  async function loadModel(id) {
-    if (busy) return;
-    busy = true; model = null; processor = null; runBtn.disabled = true;
-    const short = id.split('/')[1];
-    setSt(`Loading ${short}… (cached after first download)`, 'loading');
+  // ── load model (pipeline API — browser-confirmed working) ─────────────────
+  try {
+    setSt('Downloading RMBG-1.4… (~45 MB, cached after first load)', 'loading');
     setProg(5, 'Starting…');
-    try {
-      const cb = info => {
+
+    pipe = await pipeline('image-segmentation', 'briaai/RMBG-1.4', {
+      device: 'wasm',
+      progress_callback: info => {
         if (info.status === 'progress' && info.total) {
-          const pct = Math.round(info.loaded / info.total * 82) + 5;
+          const pct = Math.round(info.loaded / info.total * 85) + 5;
           const mb  = (info.loaded / 1048576).toFixed(1);
           const tot = (info.total  / 1048576).toFixed(1);
           setProg(pct, `Downloading… ${mb} / ${tot} MB`);
         }
-        if (info.status === 'ready') setProg(93, 'Warming up…');
-      };
+        if (info.status === 'ready') setProg(95, 'Almost ready…');
+      }
+    });
 
-      // ✅ Load both model + processor using correct IDs
-      [model, processor] = await Promise.all([
-        AutoModel.from_pretrained(id, { dtype: 'fp32', progress_callback: cb }),
-        AutoProcessor.from_pretrained(id)
-      ]);
+    setProg(100, 'Ready!');
+    setTimeout(hideProg, 700);
+    setSt('RMBG-1.4 ready ✓ — drop an image to start', 'ready');
 
-      setProg(100, 'Ready!');
-      setTimeout(hideProg, 700);
-      setSt(`${short} ready ✓ — drop an image to start`, 'ready');
-      if (srcImg) runBtn.disabled = false;
-    } catch(e) {
-      console.error('[BiRefNet] Load error:', e);
-      setSt('Load failed: ' + e.message, 'error');
-      hideProg();
-    } finally { busy = false; }
+  } catch(e) {
+    console.error('[RMBG] Load error:', e);
+    setSt('Load failed: ' + e.message, 'error');
+    hideProg();
   }
 
-  // ── model tabs ──────────────────────────────────────────────────────────────
-  document.querySelectorAll('#bgr-root .bgr-tab').forEach(t => {
-    t.addEventListener('click', () => {
-      if (busy) return;
-      document.querySelectorAll('#bgr-root .bgr-tab').forEach(x => x.classList.remove('active'));
-      t.classList.add('active');
-      currentModel = t.dataset.model;
-      outView.innerHTML = '<div class="bgr-ph">Result will appear here</div>';
-      outCanvas = null; dlBtn.disabled = true;
-      loadModel(currentModel);
-    });
-  });
-
-  // ── file upload ─────────────────────────────────────────────────────────────
+  // ── file upload ───────────────────────────────────────────────────────────
   const handleFile = file => {
     if (!file || !file.type.startsWith('image/')) return;
     srcFile = file;
@@ -295,11 +253,11 @@
       srcImg = img;
       inView.innerHTML = '';
       const el = document.createElement('img');
-      el.src = url; el.style.maxHeight = '320px';
+      el.src = url; el.style.maxHeight = '310px';
       inView.appendChild(el);
-      outView.innerHTML = '<div class="bgr-ph">Press ⚡ Remove Background</div>';
+      outView.innerHTML = '<div class="bph">Press ⚡ Remove Background</div>';
       outCanvas = null; dlBtn.disabled = true;
-      runBtn.disabled = !model;
+      runBtn.disabled = !pipe;
       resetBtn.disabled = false;
     };
     img.src = url;
@@ -314,52 +272,65 @@
     handleFile(e.dataTransfer.files[0]);
   });
 
-  // ── inference ───────────────────────────────────────────────────────────────
+  // ── inference ─────────────────────────────────────────────────────────────
   runBtn.addEventListener('click', async () => {
-    if (!model || !processor || !srcImg || !srcFile) return;
+    if (!pipe || !srcImg || !srcFile) return;
     runBtn.classList.add('proc'); runBtn.disabled = true;
     resetBtn.disabled = true; dlBtn.disabled = true;
-    setSt('Processing image…', 'loading');
-    setProg(10, 'Preparing…');
+    setSt('Processing…', 'loading');
+    setProg(10, 'Preparing image…');
 
     try {
       await new Promise(r => setTimeout(r, 30));
 
-      // ✅ RawImage.fromBlob — no CORS, works with local File objects
-      const rawImage = await RawImage.fromBlob(srcFile);
+      // ✅ Use object URL string — pipeline accepts URL strings directly
+      const objectUrl = URL.createObjectURL(srcFile);
 
-      setProg(30, 'Running BiRefNet…');
+      setProg(30, 'Running segmentation…');
       setSt('Segmentation in progress…', 'loading');
       await new Promise(r => setTimeout(r, 30));
 
-      // Pre-process
-      const { pixel_values } = await processor(rawImage);
+      // ✅ pipeline API — simplest, most reliable for browser
+      const result = await pipe(objectUrl, {
+        threshold: 0.5,
+        mask_threshold: 0.5,
+        overlap_mask_area_threshold: 0.8
+      });
 
-      setProg(55, 'Forward pass…');
+      URL.revokeObjectURL(objectUrl);
+
+      setProg(78, 'Applying alpha mask…');
       await new Promise(r => setTimeout(r, 20));
 
-      // ✅ Forward pass — official API: input_image → output_image
-      const { output_image } = await model({ input_image: pixel_values });
-
-      setProg(80, 'Applying alpha mask…');
-      await new Promise(r => setTimeout(r, 20));
-
-      // ✅ Exact same post-processing as official docs
-      const mask = await RawImage.fromTensor(
-        output_image[0].sigmoid().mul(255).to('uint8')
-      ).resize(rawImage.width, rawImage.height);
-
-      // Build output canvas with transparency
+      // Extract mask from result[0].mask (RawImage grayscale)
+      const maskImg = result[0].mask;
       const W = srcImg.naturalWidth, H = srcImg.naturalHeight;
+
+      // Scale mask → original size
+      const mc = document.createElement('canvas');
+      mc.width = maskImg.width; mc.height = maskImg.height;
+      const mCtx = mc.getContext('2d');
+      const mRaw = mCtx.createImageData(maskImg.width, maskImg.height);
+      for (let i = 0; i < maskImg.data.length; i++) {
+        const v = maskImg.data[i];
+        mRaw.data[i*4] = v; mRaw.data[i*4+1] = v;
+        mRaw.data[i*4+2] = v; mRaw.data[i*4+3] = 255;
+      }
+      mCtx.putImageData(mRaw, 0, 0);
+
+      const ms = document.createElement('canvas');
+      ms.width = W; ms.height = H;
+      ms.getContext('2d').drawImage(mc, 0, 0, W, H);
+      const scaledMask = ms.getContext('2d').getImageData(0, 0, W, H);
+
+      // Composite
       outCanvas = document.createElement('canvas');
       outCanvas.width = W; outCanvas.height = H;
       const ctx = outCanvas.getContext('2d');
       ctx.drawImage(srcImg, 0, 0);
       const imgData = ctx.getImageData(0, 0, W, H);
-
-      // mask.data = flat Uint8Array, 1 value per pixel (grayscale)
       for (let i = 0; i < W * H; i++) {
-        imgData.data[i * 4 + 3] = mask.data[i];
+        imgData.data[i*4+3] = scaledMask.data[i*4];
       }
       ctx.putImageData(imgData, 0, 0);
 
@@ -367,13 +338,13 @@
       setTimeout(hideProg, 600);
 
       outView.innerHTML = '';
-      outCanvas.style.cssText = 'max-height:320px;max-width:100%';
+      outCanvas.style.cssText = 'max-height:310px;max-width:100%';
       outView.appendChild(outCanvas);
       dlBtn.disabled = false;
       setSt('Background removed ✓', 'ready');
 
     } catch(e) {
-      console.error('[BiRefNet] Inference error:', e);
+      console.error('[RMBG] Inference error:', e);
       setSt('Error: ' + (e.message || String(e)), 'error');
       hideProg();
     } finally {
@@ -383,27 +354,25 @@
     }
   });
 
-  // ── download ────────────────────────────────────────────────────────────────
+  // ── download ──────────────────────────────────────────────────────────────
   dlBtn.addEventListener('click', () => {
     if (!outCanvas) return;
     const a = document.createElement('a');
-    a.download = 'birefnet-bg-removed.png';
+    a.download = 'removed-bg.png';
     a.href = outCanvas.toDataURL('image/png');
     a.click();
   });
 
-  // ── reset ───────────────────────────────────────────────────────────────────
+  // ── reset ─────────────────────────────────────────────────────────────────
   resetBtn.addEventListener('click', () => {
     srcImg = null; srcFile = null; outCanvas = null;
-    inView.innerHTML  = '<div class="bgr-ph">No image loaded</div>';
-    outView.innerHTML = '<div class="bgr-ph">Result will appear here</div>';
+    inView.innerHTML  = '<div class="bph">No image loaded</div>';
+    outView.innerHTML = '<div class="bph">Result will appear here</div>';
     fi.value = '';
     runBtn.disabled = true; resetBtn.disabled = true; dlBtn.disabled = true;
     hideProg();
-    if (model) setSt(currentModel.split('/')[1] + ' ready ✓ — drop an image to start', 'ready');
+    if (pipe) setSt('RMBG-1.4 ready ✓ — drop an image to start', 'ready');
   });
 
-  // ── boot ────────────────────────────────────────────────────────────────────
-  loadModel(currentModel);
 })();
 </script>
