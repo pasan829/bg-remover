@@ -1,4 +1,4 @@
-<!-- BiRefNet Background Remover — Blogger Embed (Fixed) -->
+<!-- BiRefNet Background Remover — Blogger Embed (v3 Fixed) -->
 <style>
   #bgr-root {
     font-family: 'Segoe UI', system-ui, sans-serif;
@@ -110,7 +110,7 @@
   }
   #bgr-root .bgr-view img,
   #bgr-root .bgr-view canvas { max-width: 100%; max-height: 320px; display: block; object-fit: contain; }
-  #bgr-root .bgr-ph { color: #334155; font-size: 12px; text-align: center; padding: 16px; }
+  #bgr-root .bgr-ph { color: #334155; font-size: 12px; text-align: center; padding: 16px; line-height:1.6; }
 
   #bgr-root .bgr-row { display: flex; gap: 10px; flex-wrap: wrap; }
 
@@ -158,8 +158,9 @@
     <p>Powered by <code>ZhengPeng7/BiRefNet</code> · Runs 100% in your browser · No data uploaded</p>
   </div>
 
+  <!-- ✅ Correct model IDs from official HuggingFace docs (no -ONNX suffix) -->
   <div class="bgr-tabs">
-    <div class="bgr-tab active" data-model="onnx-community/BiRefNet_lite-ONNX">⚡ Lite (~70MB)</div>
+    <div class="bgr-tab active" data-model="onnx-community/BiRefNet_lite">⚡ Lite (~70MB)</div>
     <div class="bgr-tab" data-model="onnx-community/BiRefNet-ONNX">🎯 Full (~170MB)</div>
     <div class="bgr-tab" data-model="onnx-community/BiRefNet-portrait-ONNX">🧑 Portrait (~170MB)</div>
   </div>
@@ -212,14 +213,11 @@
 
   env.allowLocalModels = false;
 
-  /* ── state ── */
   let model = null, processor = null;
-  let srcFile = null, srcImg = null;
-  let outCanvas = null;
-  let currentModel = 'onnx-community/BiRefNet_lite-ONNX';
+  let srcFile = null, srcImg = null, outCanvas = null;
+  let currentModel = 'onnx-community/BiRefNet_lite';
   let busy = false;
 
-  /* ── refs ── */
   const $ = id => document.getElementById(id);
   const drop = $('bgr-drop'), fi = $('bgr-fi');
   const runBtn = $('bgr-run'), resetBtn = $('bgr-reset'), dlBtn = $('bgr-dl');
@@ -227,26 +225,22 @@
   const prog = $('bgr-prog'), pf = $('bgr-pf'), pl = $('bgr-pl');
   const inView = $('bgr-in'), outView = $('bgr-out');
 
-  /* ── helpers ── */
   const setSt = (msg, state) => {
-    stxt.textContent = msg;
-    stxt.className = 'bgr-stxt on';
+    stxt.textContent = msg; stxt.className = 'bgr-stxt on';
     dot.className = 'bgr-dot ' + state;
     statusEl.className = 'bgr-status' +
       (state === 'ready' ? ' s-ready' : state === 'error' ? ' s-error' : '');
   };
   const setProg = (pct, lbl) => {
-    prog.classList.add('on');
-    pf.style.width = pct + '%';
+    prog.classList.add('on'); pf.style.width = pct + '%';
     pl.textContent = lbl || pct + '%';
   };
   const hideProg = () => { prog.classList.remove('on'); pf.style.width = '0'; };
 
-  /* ── load model ── */
+  // ── load model ──────────────────────────────────────────────────────────────
   async function loadModel(id) {
     if (busy) return;
-    busy = true; model = null; processor = null;
-    runBtn.disabled = true;
+    busy = true; model = null; processor = null; runBtn.disabled = true;
     const short = id.split('/')[1];
     setSt(`Loading ${short}… (cached after first download)`, 'loading');
     setProg(5, 'Starting…');
@@ -260,22 +254,25 @@
         }
         if (info.status === 'ready') setProg(93, 'Warming up…');
       };
+
+      // ✅ Load both model + processor using correct IDs
       [model, processor] = await Promise.all([
         AutoModel.from_pretrained(id, { dtype: 'fp32', progress_callback: cb }),
         AutoProcessor.from_pretrained(id)
       ]);
+
       setProg(100, 'Ready!');
       setTimeout(hideProg, 700);
       setSt(`${short} ready ✓ — drop an image to start`, 'ready');
       if (srcImg) runBtn.disabled = false;
     } catch(e) {
-      console.error(e);
+      console.error('[BiRefNet] Load error:', e);
       setSt('Load failed: ' + e.message, 'error');
       hideProg();
     } finally { busy = false; }
   }
 
-  /* ── model tabs ── */
+  // ── model tabs ──────────────────────────────────────────────────────────────
   document.querySelectorAll('#bgr-root .bgr-tab').forEach(t => {
     t.addEventListener('click', () => {
       if (busy) return;
@@ -288,10 +285,10 @@
     });
   });
 
-  /* ── file handling ── */
+  // ── file upload ─────────────────────────────────────────────────────────────
   const handleFile = file => {
     if (!file || !file.type.startsWith('image/')) return;
-    srcFile = file; // ← store raw File object for RawImage.fromBlob()
+    srcFile = file;
     const url = URL.createObjectURL(file);
     const img = new Image();
     img.onload = () => {
@@ -317,7 +314,7 @@
     handleFile(e.dataTransfer.files[0]);
   });
 
-  /* ── inference ── */
+  // ── inference ───────────────────────────────────────────────────────────────
   runBtn.addEventListener('click', async () => {
     if (!model || !processor || !srcImg || !srcFile) return;
     runBtn.classList.add('proc'); runBtn.disabled = true;
@@ -328,47 +325,31 @@
     try {
       await new Promise(r => setTimeout(r, 30));
 
-      // ✅ Use RawImage.fromBlob() — no CORS, no dataURL roundtrip
+      // ✅ RawImage.fromBlob — no CORS, works with local File objects
       const rawImage = await RawImage.fromBlob(srcFile);
 
       setProg(30, 'Running BiRefNet…');
-      setSt('Running BiRefNet segmentation…', 'loading');
+      setSt('Segmentation in progress…', 'loading');
       await new Promise(r => setTimeout(r, 30));
 
-      // Preprocess
+      // Pre-process
       const { pixel_values } = await processor(rawImage);
 
       setProg(55, 'Forward pass…');
       await new Promise(r => setTimeout(r, 20));
 
-      // Model forward pass
-      const result = await model({ input_image: pixel_values });
-
-      // ✅ Safely extract output — handle different output shapes
-      let outputTensor = null;
-      if (result.output_image) {
-        outputTensor = result.output_image[0];
-      } else {
-        // Fallback: grab first tensor value
-        const keys = Object.keys(result);
-        console.log('Model output keys:', keys, result);
-        outputTensor = result[keys[0]];
-        if (outputTensor && outputTensor.dims && outputTensor.dims.length > 3) {
-          outputTensor = outputTensor[0];
-        }
-      }
-
-      if (!outputTensor) throw new Error('Could not extract model output. Keys: ' + Object.keys(result).join(', '));
+      // ✅ Forward pass — official API: input_image → output_image
+      const { output_image } = await model({ input_image: pixel_values });
 
       setProg(80, 'Applying alpha mask…');
       await new Promise(r => setTimeout(r, 20));
 
-      // sigmoid → uint8 → resize to original
+      // ✅ Exact same post-processing as official docs
       const mask = await RawImage.fromTensor(
-        outputTensor.sigmoid().mul(255).to('uint8')
-      ).resize(srcImg.naturalWidth, srcImg.naturalHeight);
+        output_image[0].sigmoid().mul(255).to('uint8')
+      ).resize(rawImage.width, rawImage.height);
 
-      // Composite original + alpha
+      // Build output canvas with transparency
       const W = srcImg.naturalWidth, H = srcImg.naturalHeight;
       outCanvas = document.createElement('canvas');
       outCanvas.width = W; outCanvas.height = H;
@@ -376,7 +357,7 @@
       ctx.drawImage(srcImg, 0, 0);
       const imgData = ctx.getImageData(0, 0, W, H);
 
-      // mask.data = Uint8Array, 1 channel
+      // mask.data = flat Uint8Array, 1 value per pixel (grayscale)
       for (let i = 0; i < W * H; i++) {
         imgData.data[i * 4 + 3] = mask.data[i];
       }
@@ -392,8 +373,8 @@
       setSt('Background removed ✓', 'ready');
 
     } catch(e) {
-      console.error('Inference error:', e);
-      setSt('Error: ' + (e.message || 'Unknown error'), 'error');
+      console.error('[BiRefNet] Inference error:', e);
+      setSt('Error: ' + (e.message || String(e)), 'error');
       hideProg();
     } finally {
       runBtn.classList.remove('proc');
@@ -402,7 +383,7 @@
     }
   });
 
-  /* ── download ── */
+  // ── download ────────────────────────────────────────────────────────────────
   dlBtn.addEventListener('click', () => {
     if (!outCanvas) return;
     const a = document.createElement('a');
@@ -411,7 +392,7 @@
     a.click();
   });
 
-  /* ── reset ── */
+  // ── reset ───────────────────────────────────────────────────────────────────
   resetBtn.addEventListener('click', () => {
     srcImg = null; srcFile = null; outCanvas = null;
     inView.innerHTML  = '<div class="bgr-ph">No image loaded</div>';
@@ -422,7 +403,7 @@
     if (model) setSt(currentModel.split('/')[1] + ' ready ✓ — drop an image to start', 'ready');
   });
 
-  /* ── boot ── */
+  // ── boot ────────────────────────────────────────────────────────────────────
   loadModel(currentModel);
 })();
 </script>
