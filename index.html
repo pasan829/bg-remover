@@ -322,30 +322,68 @@
     });
   });
 
+  // ── File handler — stable on mobile & desktop ────────────────────────────────
   const handleFile = file => {
     if (!file || !file.type.startsWith('image/')) return;
+
+    // Revoke previous URL
+    if (srcImg && srcImg._blobUrl) URL.revokeObjectURL(srcImg._blobUrl);
+
     srcFile = file;
     const url = URL.createObjectURL(file);
     const img = new Image();
+
     img.onload = () => {
+      img._blobUrl = url;
       srcImg = img;
       inView.innerHTML = '';
       const el = document.createElement('img');
-      el.src = url; el.style.cssText = 'max-height:clamp(200px,40vw,300px);max-width:100%';
+      el.src = url;
+      el.style.cssText = 'max-height:clamp(200px,40vw,300px);max-width:100%;display:block;';
       inView.appendChild(el);
       outView.innerHTML = '<div class="bph">Press ⚡ Remove Background</div>';
       outCanvas = null; dlBtn.disabled = true;
       runBtn.disabled = !(currentPipe || currentModel);
       resetBtn.disabled = false;
+      // Scroll to button on mobile
+      if (window.innerWidth < 640) {
+        setTimeout(() => runBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 300);
+      }
     };
+
+    img.onerror = () => { URL.revokeObjectURL(url); setSt('Image load failed.', 'error'); };
     img.src = url;
   };
 
+  // ── Drop zone events — mobile-safe ──────────────────────────────────────────
+  // Click → open file picker
   drop.addEventListener('click', () => fi.click());
-  fi.addEventListener('change', e => handleFile(e.target.files[0]));
-  drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('over'); });
-  drop.addEventListener('dragleave', () => drop.classList.remove('over'));
-  drop.addEventListener('drop', e => { e.preventDefault(); drop.classList.remove('over'); handleFile(e.dataTransfer.files[0]); });
+
+  // File input change — most reliable on all devices
+  fi.addEventListener('change', e => {
+    const file = e.target.files && e.target.files[0];
+    if (file) handleFile(file);
+    fi.value = ''; // allow re-selecting same file
+  });
+
+  // Drag & drop — desktop only (dragenter/dragleave child-aware)
+  drop.addEventListener('dragenter', e => { e.preventDefault(); drop.classList.add('over'); });
+  drop.addEventListener('dragover',  e => { e.preventDefault(); });
+  drop.addEventListener('dragleave', e => {
+    if (!drop.contains(e.relatedTarget)) drop.classList.remove('over');
+  });
+  drop.addEventListener('drop', e => {
+    e.preventDefault(); drop.classList.remove('over');
+    const file = e.dataTransfer.files && e.dataTransfer.files[0];
+    if (file) handleFile(file);
+  });
+
+  // Paste from clipboard (bonus)
+  document.addEventListener('paste', e => {
+    const item = Array.from(e.clipboardData.items || []).find(i => i.type.startsWith('image/'));
+    if (item) handleFile(item.getAsFile());
+  });
+
 
   runBtn.addEventListener('click', async () => {
     if (!(currentPipe || currentModel) || !srcImg || !srcFile) return;
