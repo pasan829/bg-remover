@@ -197,7 +197,7 @@
     - iOS Safari ✅  Android Chrome ✅  Desktop ✅
     - No page reload, no form submit
   -->
-  <label class="bdrop" id="bgr-drop" for="bgr-fi">
+  <label class="bdrop" id="bgr-drop">
     <input type="file" id="bgr-fi" accept="image/*"/>
     <span class="bi">🖼️</span>
     <h3>Tap here to select image</h3>
@@ -216,9 +216,9 @@
   </div>
 
   <div class="brow">
-    <button id="bgr-run" disabled><div class="bspin"></div><span>⚡ Remove Background</span></button>
-    <button id="bgr-reset" disabled>🔄 Reset</button>
-    <button id="bgr-dl" disabled>⬇ Download PNG</button>
+    <button type="button" id="bgr-run" disabled><div class="bspin"></div><span>⚡ Remove Background</span></button>
+    <button type="button" id="bgr-reset" disabled>🔄 Reset</button>
+    <button type="button" id="bgr-dl" disabled>⬇ Download PNG</button>
   </div>
 
   <div class="bcredit">
@@ -317,7 +317,8 @@ async function loadModel(id) {
 
 // ── Model card switch ─────────────────────────────────────────────────────────
 document.querySelectorAll('#bgr-cards .bcard').forEach(card => {
-  card.addEventListener('click', () => {
+  card.addEventListener('click', (e) => {
+    e.stopPropagation();
     if (loading) return;
     document.querySelectorAll('#bgr-cards .bcard').forEach(c => c.classList.remove('active'));
     card.classList.add('active');
@@ -407,7 +408,8 @@ document.addEventListener('paste', e => {
 });
 
 // ── Remove Background ─────────────────────────────────────────────────────────
-runBtn.addEventListener('click', async () => {
+runBtn.addEventListener('click', async (e) => {
+  e.stopPropagation();
   if (!(currentPipe || currentModel) || !srcImg || !srcFile) return;
   runBtn.classList.add('proc'); runBtn.disabled = true;
   resetBtn.disabled = true; dlBtn.disabled = true;
@@ -486,7 +488,8 @@ runBtn.addEventListener('click', async () => {
 });
 
 // ── Download ──────────────────────────────────────────────────────────────────
-dlBtn.addEventListener('click', () => {
+dlBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
   if (!outCanvas) return;
   const a = document.createElement('a');
   a.download = 'removed-bg.png';
@@ -495,7 +498,8 @@ dlBtn.addEventListener('click', () => {
 });
 
 // ── Reset ─────────────────────────────────────────────────────────────────────
-resetBtn.addEventListener('click', () => {
+resetBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
   if (srcImg && srcImg._blobUrl) URL.revokeObjectURL(srcImg._blobUrl);
   srcImg = null; srcFile = null; outCanvas = null;
   inView.innerHTML  = '<div class="bph">No image loaded</div>';
