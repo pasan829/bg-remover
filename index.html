@@ -1,181 +1,181 @@
-<!-- AI Background Remover — Blogger Embed — Responsive -->
-<style>
-  #bgr-root {
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    background: #f0ece4;
-    border-radius: 16px;
-    padding: clamp(16px, 4vw, 28px) clamp(12px, 4vw, 22px) clamp(20px, 4vw, 32px);
-    max-width: 880px;
-    margin: 0 auto;
-    color: #2d2a26;
-    width: 100%;
-  }
-  #bgr-root * { box-sizing: border-box; margin: 0; padding: 0; }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net;
+    worker-src blob: 'self';
+    child-src blob: 'self';
+    connect-src 'self' https://huggingface.co https://*.huggingface.co https://cdn-lfs.huggingface.co https://cdn-lfs-us-1.huggingface.co https://cdn.jsdelivr.net;
+    img-src 'self' blob: data:;
+    style-src 'self' 'unsafe-inline';
+    font-src 'self' data:;
+  "/>
+  <title>AI Background Remover</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      min-height: 100%; width: 100%;
+      background: #e8e2d8;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      -webkit-text-size-adjust: 100%;
+    }
+    body { padding: 16px 8px; }
 
-  /* ── header ── */
-  #bgr-root .bh { text-align: center; margin-bottom: clamp(14px, 3vw, 22px); }
-  #bgr-root .bh h2 {
-    font-size: clamp(1.2rem, 4vw, 1.6rem);
-    font-weight: 800; letter-spacing: -.02em; color: #2d2a26; margin-bottom: 5px;
-  }
-  #bgr-root .bh p { font-size: clamp(11px, 2vw, 12px); color: #8a8070; line-height: 1.6; }
+    #bgr-root {
+      background: #f0ece4;
+      border-radius: 16px;
+      padding: clamp(16px, 4vw, 28px) clamp(12px, 4vw, 22px) clamp(20px, 4vw, 32px);
+      max-width: 860px;
+      margin: 0 auto;
+      color: #2d2a26;
+      width: 100%;
+    }
 
-  /* ── model cards ── */
-  #bgr-root .bcards {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px; margin-bottom: 16px;
-  }
-  @media(max-width: 560px) {
-    #bgr-root .bcards { grid-template-columns: 1fr; gap: 8px; }
-  }
+    /* ── header ── */
+    #bgr-root .bh { text-align: center; margin-bottom: clamp(14px, 3vw, 22px); }
+    #bgr-root .bh h2 {
+      font-size: clamp(1.2rem, 4vw, 1.6rem);
+      font-weight: 800; letter-spacing: -.02em; color: #2d2a26; margin-bottom: 5px;
+    }
+    #bgr-root .bh p { font-size: clamp(11px, 2vw, 12px); color: #8a8070; line-height: 1.6; }
 
-  #bgr-root .bcard {
-    border: 2px solid #ddd8ce; border-radius: 12px;
-    padding: clamp(10px, 2.5vw, 13px) clamp(10px, 2.5vw, 15px);
-    cursor: pointer; transition: all .2s; background: #fff;
-  }
-  #bgr-root .bcard:hover { border-color: #e8553a; }
-  #bgr-root .bcard.active { border-color: #e8553a; box-shadow: 0 0 0 3px rgba(232,85,58,.12); }
+    /* ── model cards ── */
+    #bgr-root .bcards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+    @media(max-width:560px) { #bgr-root .bcards { grid-template-columns: 1fr; gap: 8px; } }
 
-  #bgr-root .bcard-top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
-  #bgr-root .bcard-icon { font-size: 18px; flex-shrink: 0; }
-  #bgr-root .bcard-name { font-size: clamp(12px, 2.5vw, 13px); font-weight: 700; color: #2d2a26; line-height: 1.2; }
-  #bgr-root .bcard-name span { font-size: 10px; font-weight: 400; color: #a09880; font-family: monospace; display: block; margin-top: 2px; }
-  #bgr-root .bcard-badge {
-    font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 100px;
-    background: #e8553a; color: #fff; white-space: nowrap; flex-shrink: 0;
-  }
-  #bgr-root .bcard-badge.alt { background: #f0ece4; color: #e8553a; border: 1px solid #e8553a; }
-  #bgr-root .bcard-desc { font-size: clamp(10px, 2vw, 11px); color: #7a7060; line-height: 1.5; }
-  #bgr-root .bcard-size {
-    margin-top: 6px; font-size: 10px; font-family: monospace;
-    color: #b0a898; display: flex; align-items: center; gap: 5px;
-  }
-  #bgr-root .bcard-size::before {
-    content: ''; display: inline-block; width: 5px; height: 5px;
-    border-radius: 50%; background: #d0c8bc; flex-shrink: 0;
-  }
-  #bgr-root .bcard.active .bcard-size::before { background: #e8553a; }
+    #bgr-root .bcard {
+      border: 2px solid #ddd8ce; border-radius: 12px;
+      padding: clamp(10px,2.5vw,13px) clamp(10px,2.5vw,15px);
+      cursor: pointer; transition: border-color .2s, box-shadow .2s; background: #fff;
+    }
+    #bgr-root .bcard:hover  { border-color: #e8553a; }
+    #bgr-root .bcard.active { border-color: #e8553a; box-shadow: 0 0 0 3px rgba(232,85,58,.12); }
 
-  /* ── status ── */
-  #bgr-root .bs {
-    display: flex; align-items: center; gap: 10px;
-    background: #fff; border: 1.5px solid #ddd8ce;
-    border-radius: 10px; padding: 10px 14px;
-    font-size: clamp(10px, 2vw, 11px); font-family: monospace;
-    margin-bottom: 12px; transition: border-color .3s;
-  }
-  #bgr-root .bs.ok  { border-color: #4caf7d; }
-  #bgr-root .bs.err { border-color: #e8553a; }
-  #bgr-root .bd {
-    width: 7px; height: 7px; border-radius: 50%;
-    background: #c0b8ac; flex-shrink: 0; transition: background .3s;
-  }
-  #bgr-root .bd.loading { background: #e8553a; animation: bp 1s infinite; }
-  #bgr-root .bd.ready   { background: #4caf7d; }
-  #bgr-root .bd.error   { background: #e8553a; }
-  @keyframes bp { 0%,100%{opacity:1} 50%{opacity:.3} }
-  #bgr-root .bt { color: #a09880; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  #bgr-root .bt.on { color: #2d2a26; }
+    #bgr-root .bcard-top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+    #bgr-root .bcard-icon { font-size: 18px; flex-shrink: 0; }
+    #bgr-root .bcard-name { font-size: clamp(12px,2.5vw,13px); font-weight: 700; color: #2d2a26; line-height: 1.2; }
+    #bgr-root .bcard-name span { font-size: 10px; font-weight: 400; color: #a09880; font-family: monospace; display: block; margin-top: 2px; }
+    #bgr-root .bcard-badge { font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 100px; background: #e8553a; color: #fff; white-space: nowrap; flex-shrink: 0; }
+    #bgr-root .bcard-badge.alt { background: #f0ece4; color: #e8553a; border: 1px solid #e8553a; }
+    #bgr-root .bcard-desc { font-size: clamp(10px,2vw,11px); color: #7a7060; line-height: 1.5; }
+    #bgr-root .bcard-size { margin-top: 6px; font-size: 10px; font-family: monospace; color: #b0a898; display: flex; align-items: center; gap: 5px; }
+    #bgr-root .bcard-size::before { content:''; display:inline-block; width:5px; height:5px; border-radius:50%; background:#d0c8bc; flex-shrink:0; }
+    #bgr-root .bcard.active .bcard-size::before { background: #e8553a; }
 
-  /* ── progress ── */
-  #bgr-root .bpw { margin-bottom: 12px; display: none; }
-  #bgr-root .bpw.on { display: block; }
-  #bgr-root .bpb { background: #ddd8ce; border-radius: 99px; height: 4px; overflow: hidden; }
-  #bgr-root .bpf { height: 100%; background: #e8553a; border-radius: 99px; width: 0; transition: width .4s ease; }
-  #bgr-root .bpl { font-size: 10px; color: #a09880; font-family: monospace; text-align: right; margin-top: 4px; }
+    /* ── status ── */
+    #bgr-root .bs {
+      display: flex; align-items: center; gap: 10px;
+      background: #fff; border: 1.5px solid #ddd8ce; border-radius: 10px;
+      padding: 10px 14px; font-size: clamp(10px,2vw,11px); font-family: monospace;
+      margin-bottom: 12px; transition: border-color .3s;
+    }
+    #bgr-root .bs.ok  { border-color: #4caf7d; }
+    #bgr-root .bs.err { border-color: #e8553a; }
+    #bgr-root .bd { width: 7px; height: 7px; border-radius: 50%; background: #c0b8ac; flex-shrink: 0; transition: background .3s; }
+    #bgr-root .bd.loading { background: #e8553a; animation: bp 1s infinite; }
+    #bgr-root .bd.ready   { background: #4caf7d; }
+    #bgr-root .bd.error   { background: #e8553a; }
+    @keyframes bp { 0%,100%{opacity:1} 50%{opacity:.3} }
+    #bgr-root .bt { color: #a09880; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #bgr-root .bt.on { color: #2d2a26; }
 
-  /* ── drop ── */
-  #bgr-root .bdrop { position:relative; overflow:hidden;
-    border: 2px dashed #c8c0b4; border-radius: 12px;
-    padding: clamp(22px, 5vw, 36px) 16px; text-align: center; cursor: pointer;
-    transition: all .2s; background: #e8e2d8; margin-bottom: 14px;
-  }
-  #bgr-root .bdrop:hover, #bgr-root .bdrop.over { border-color: #e8553a; background: #fdf5f2; }
-  #bgr-root .bdrop .bi, #bgr-root .bdrop h3, #bgr-root .bdrop p { pointer-events:none; position:relative; z-index:1; }
-  #bgr-root .bdrop .bi { font-size: clamp(26px, 6vw, 34px); margin-bottom: 8px; display: block; }
-  #bgr-root .bdrop h3 { font-size: clamp(13px, 3vw, 14px); font-weight: 700; color: #e8553a; margin-bottom: 5px; }
-  #bgr-root .bdrop p { font-size: clamp(11px, 2.5vw, 12px); color: #8a8070; }
-  #bgr-root .bdrop p em { color: #e8553a; font-style: normal; font-weight: 600; }
+    /* ── progress ── */
+    #bgr-root .bpw { margin-bottom: 12px; display: none; }
+    #bgr-root .bpw.on { display: block; }
+    #bgr-root .bpb { background: #ddd8ce; border-radius: 99px; height: 4px; overflow: hidden; }
+    #bgr-root .bpf { height: 100%; background: #e8553a; border-radius: 99px; width: 0; transition: width .4s ease; }
+    #bgr-root .bpl { font-size: 10px; color: #a09880; font-family: monospace; text-align: right; margin-top: 4px; }
 
-  /* ── preview grid ── */
-  #bgr-root .bgrid {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 12px; margin-bottom: 16px;
-  }
-  @media(max-width: 560px) {
-    #bgr-root .bgrid { grid-template-columns: 1fr; gap: 10px; }
-  }
+    /* ── drop zone ── */
+    #bgr-root .bdrop {
+      position: relative; overflow: hidden;
+      border: 2px dashed #c8c0b4; border-radius: 12px;
+      padding: clamp(22px,5vw,36px) 16px; text-align: center;
+      transition: border-color .2s, background .2s;
+      background: #e8e2d8; margin-bottom: 14px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #bgr-root .bdrop:hover,
+    #bgr-root .bdrop.over { border-color: #e8553a; background: #fdf5f2; }
+    #bgr-root .bdrop .bi,
+    #bgr-root .bdrop h3,
+    #bgr-root .bdrop p { pointer-events: none; position: relative; z-index: 1; }
+    #bgr-root .bdrop .bi { font-size: clamp(26px,6vw,34px); margin-bottom: 8px; display: block; }
+    #bgr-root .bdrop h3 { font-size: clamp(13px,3vw,14px); font-weight: 700; color: #e8553a; margin-bottom: 5px; }
+    #bgr-root .bdrop p  { font-size: clamp(11px,2.5vw,12px); color: #8a8070; }
+    #bgr-root .bdrop p em { color: #e8553a; font-style: normal; font-weight: 600; }
 
-  #bgr-root .bpane { background: #fff; border: 1.5px solid #ddd8ce; border-radius: 12px; overflow: hidden; }
-  #bgr-root .bplbl {
-    padding: 7px 12px; border-bottom: 1.5px solid #ede8e0;
-    font-size: 10px; font-family: monospace; letter-spacing: 1.5px;
-    text-transform: uppercase; color: #a09880;
-    display: flex; align-items: center; justify-content: space-between; background: #f8f5f0;
-  }
-  #bgr-root .bchip { font-size: 9px; padding: 2px 7px; border-radius: 4px; font-weight: 700; }
-  #bgr-root .bchip.p { background: #e8e2d8; color: #8a8070; }
-  #bgr-root .bchip.g { background: #e8553a; color: #fff; }
+    /* ── preview ── */
+    #bgr-root .bgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+    @media(max-width:560px) { #bgr-root .bgrid { grid-template-columns: 1fr; gap: 10px; } }
 
-  #bgr-root .bview {
-    min-height: clamp(140px, 30vw, 200px);
-    display: flex; align-items: center; justify-content: center;
-    background: repeating-conic-gradient(#e8e2d8 0% 25%, #f5f0e8 0% 50%) 0 0/14px 14px;
-  }
-  #bgr-root .bview img, #bgr-root .bview canvas {
-    max-width: 100%; max-height: clamp(200px, 40vw, 300px);
-    display: block; object-fit: contain;
-  }
-  #bgr-root .bph { color: #c0b8ac; font-size: 12px; text-align: center; padding: 14px; line-height: 1.6; }
+    #bgr-root .bpane { background: #fff; border: 1.5px solid #ddd8ce; border-radius: 12px; overflow: hidden; }
+    #bgr-root .bplbl {
+      padding: 7px 12px; border-bottom: 1.5px solid #ede8e0;
+      font-size: 10px; font-family: monospace; letter-spacing: 1.5px;
+      text-transform: uppercase; color: #a09880; background: #f8f5f0;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    #bgr-root .bchip { font-size: 9px; padding: 2px 7px; border-radius: 4px; font-weight: 700; }
+    #bgr-root .bchip.p { background: #e8e2d8; color: #8a8070; }
+    #bgr-root .bchip.g { background: #e8553a; color: #fff; }
+    #bgr-root .bview {
+      min-height: clamp(140px,30vw,200px);
+      display: flex; align-items: center; justify-content: center;
+      background: repeating-conic-gradient(#e8e2d8 0% 25%,#f5f0e8 0% 50%) 0 0/14px 14px;
+    }
+    #bgr-root .bview img,
+    #bgr-root .bview canvas { max-width: 100%; max-height: clamp(200px,40vw,300px); display: block; object-fit: contain; }
+    #bgr-root .bph { color: #c0b8ac; font-size: 12px; text-align: center; padding: 14px; line-height: 1.6; }
 
-  /* ── buttons ── */
-  #bgr-root .brow { display: flex; gap: 8px; flex-wrap: wrap; }
+    /* ── buttons ── */
+    #bgr-root .brow { display: flex; gap: 8px; flex-wrap: wrap; }
+    @media(max-width:400px) {
+      #bgr-root .brow { flex-direction: column; }
+      #bgr-root .brow button { width: 100%; justify-content: center; }
+    }
+    #bgr-root button {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: clamp(12px,3vw,13px); font-weight: 700;
+      border: none; border-radius: 8px;
+      padding: clamp(9px,2.5vw,11px) clamp(14px,3vw,20px);
+      cursor: pointer; transition: all .18s;
+      display: inline-flex; align-items: center; gap: 6px;
+      white-space: nowrap; -webkit-tap-highlight-color: transparent;
+    }
+    #bgr-root #bgr-run { background: #e8553a; color: #fff; box-shadow: 0 2px 8px rgba(232,85,58,.3); }
+    #bgr-root #bgr-run:hover:not(:disabled),
+    #bgr-root #bgr-run:active:not(:disabled) { background: #d44a2f; }
+    #bgr-root #bgr-run:disabled { opacity: .45; cursor: not-allowed; }
+    #bgr-root #bgr-reset { background: #fff; color: #5a5248; border: 1.5px solid #ddd8ce; }
+    #bgr-root #bgr-reset:hover:not(:disabled) { border-color: #e8553a; color: #e8553a; }
+    #bgr-root #bgr-reset:disabled { opacity: .4; cursor: not-allowed; }
+    #bgr-root #bgr-dl { background: #fff; color: #e8553a; border: 1.5px solid #e8553a; }
+    #bgr-root #bgr-dl:hover:not(:disabled),
+    #bgr-root #bgr-dl:active:not(:disabled) { background: #fdf5f2; }
+    #bgr-root #bgr-dl:disabled { opacity: .4; cursor: not-allowed; }
 
-  @media(max-width: 400px) {
-    #bgr-root .brow { flex-direction: column; }
-    #bgr-root .brow button { width: 100%; justify-content: center; }
-  }
+    #bgr-root .bspin {
+      width: 13px; height: 13px;
+      border: 2px solid rgba(255,255,255,.35); border-top-color: #fff;
+      border-radius: 50%; animation: brot .65s linear infinite; display: none;
+    }
+    #bgr-root #bgr-run.proc .bspin { display: block; }
+    @keyframes brot { to { transform: rotate(360deg); } }
 
-  #bgr-root button {
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    font-size: clamp(12px, 3vw, 13px); font-weight: 700;
-    border: none; border-radius: 8px;
-    padding: clamp(9px, 2.5vw, 11px) clamp(14px, 3vw, 20px);
-    cursor: pointer; transition: all .18s;
-    display: inline-flex; align-items: center; gap: 6px;
-    white-space: nowrap;
-  }
-  #bgr-root #bgr-run { background: #e8553a; color: #fff; box-shadow: 0 2px 8px rgba(232,85,58,.3); }
-  #bgr-root #bgr-run:hover:not(:disabled) { background: #d44a2f; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(232,85,58,.4); }
-  #bgr-root #bgr-run:disabled { opacity: .45; cursor: not-allowed; transform: none; box-shadow: none; }
-
-  #bgr-root #bgr-reset { background: #fff; color: #5a5248; border: 1.5px solid #ddd8ce; }
-  #bgr-root #bgr-reset:hover:not(:disabled) { border-color: #e8553a; color: #e8553a; }
-  #bgr-root #bgr-reset:disabled { opacity: .4; cursor: not-allowed; }
-
-  #bgr-root #bgr-dl { background: #fff; color: #e8553a; border: 1.5px solid #e8553a; }
-  #bgr-root #bgr-dl:hover:not(:disabled) { background: #fdf5f2; transform: translateY(-1px); }
-  #bgr-root #bgr-dl:disabled { opacity: .4; cursor: not-allowed; }
-
-  #bgr-root .bspin {
-    width: 13px; height: 13px; border: 2px solid rgba(255,255,255,.35);
-    border-top-color: #fff; border-radius: 50%; animation: brot .65s linear infinite; display: none;
-  }
-  #bgr-root #bgr-run.proc .bspin { display: block; }
-  @keyframes brot { to { transform: rotate(360deg); } }
-
-  /* ── credit ── */
-  #bgr-root .bcredit { text-align: center; margin-top: 18px; font-size: 10px; color: #b0a898; font-family: monospace; }
-  #bgr-root .bcredit a { color: #e8553a; text-decoration: none; }
-  #bgr-root .bcredit a:hover { text-decoration: underline; }
-</style>
+    #bgr-root .bcredit { text-align: center; margin-top: 18px; font-size: 10px; color: #b0a898; font-family: monospace; }
+    #bgr-root .bcredit a { color: #e8553a; text-decoration: none; }
+  </style>
+</head>
+<body>
 
 <div id="bgr-root">
   <div class="bh">
     <h2>✂️ AI Background Remover</h2>
-    <p>100% in-browser · No upload · No server · Choose your AI model below</p>
+    <p>100% in-browser · No upload · No server · Choose your AI model</p>
   </div>
 
   <div class="bcards" id="bgr-cards">
@@ -185,7 +185,7 @@
         <div class="bcard-name">RMBG-1.4<span>briaai/RMBG-1.4</span></div>
         <span class="bcard-badge">Recommended</span>
       </div>
-      <div class="bcard-desc">Best overall quality. Works great on any type of image — products, people, objects.</div>
+      <div class="bcard-desc">Best overall quality — products, people, objects.</div>
       <div class="bcard-size">~45 MB · Cached after first load</div>
     </div>
     <div class="bcard" data-model="Xenova/modnet" data-type="automodel">
@@ -194,7 +194,7 @@
         <div class="bcard-name">MODNet<span>Xenova/modnet</span></div>
         <span class="bcard-badge alt">Portraits</span>
       </div>
-      <div class="bcard-desc">Optimized for humans & portraits. Lighter model, fast processing, great for selfies.</div>
+      <div class="bcard-desc">Optimized for humans & portraits. Fast & lightweight.</div>
       <div class="bcard-size">~25 MB · Cached after first load</div>
     </div>
   </div>
@@ -209,11 +209,13 @@
     <div class="bpl" id="bgr-pl">0%</div>
   </div>
 
+  <!-- Drop zone — file input is full-area transparent overlay (no fi.click() needed) -->
   <div class="bdrop" id="bgr-drop">
-    <input type="file" id="bgr-fi" accept="image/*" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;z-index:2;"/>
+    <input type="file" id="bgr-fi" accept="image/*"
+      style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;z-index:2;"/>
     <span class="bi">🖼️</span>
-    <h3>Drop images here or click to select</h3>
-    <p>PNG, JPG, WebP — <em>click to browse</em></p>
+    <h3>Drop image here or tap to select</h3>
+    <p>PNG · JPG · WebP — <em>tap to browse</em></p>
   </div>
 
   <div class="bgrid">
@@ -236,245 +238,284 @@
   <div class="bcredit">
     <a href="https://huggingface.co/briaai/RMBG-1.4" target="_blank">briaai/RMBG-1.4</a> ·
     <a href="https://huggingface.co/Xenova/modnet" target="_blank">Xenova/modnet</a> ·
-    <a href="https://huggingface.co/docs/transformers.js" target="_blank">Transformers.js v3</a> · Zero upload
+    Zero upload · Privacy-first
   </div>
 </div>
 
-<script type="module">
-(async () => {
-  const { pipeline, AutoModel, AutoProcessor, RawImage, env } = await import(
-    'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.5.0/dist/transformers.min.js'
-  );
-  env.allowLocalModels = false;
-
-  const MODELS = {
-    'briaai/RMBG-1.4': { type: 'pipeline', label: 'RMBG-1.4' },
-    'Xenova/modnet':   { type: 'automodel', label: 'MODNet'   }
-  };
-
-  let currentPipe = null, currentModel = null, currentProcessor = null;
-  let currentModelId = 'briaai/RMBG-1.4';
-  let srcFile = null, srcImg = null, outCanvas = null;
-  let loading = false;
-
-  const $ = id => document.getElementById(id);
-  const drop = $('bgr-drop'), fi = $('bgr-fi');
-  const runBtn = $('bgr-run'), resetBtn = $('bgr-reset'), dlBtn = $('bgr-dl');
-  const dot = $('bgr-d'), stxt = $('bgr-t'), sbar = $('bgr-s');
-  const pw = $('bgr-pw'), pf = $('bgr-pf'), pl = $('bgr-pl');
-  const inView = $('bgr-in'), outView = $('bgr-out');
-
-  const setSt = (msg, state) => {
-    stxt.textContent = msg; stxt.className = 'bt on';
-    dot.className = 'bd ' + state;
-    sbar.className = 'bs' + (state === 'ready' ? ' ok' : state === 'error' ? ' err' : '');
-  };
-  const setProg = (pct, lbl) => {
-    pw.classList.add('on'); pf.style.width = pct + '%';
-    pl.textContent = lbl || pct + '%';
-  };
-  const hideProg = () => { pw.classList.remove('on'); pf.style.width = '0'; };
-
-  const progCb = info => {
-    if (info.status === 'progress' && info.total) {
-      const pct = Math.round(info.loaded / info.total * 82) + 5;
-      setProg(pct, `Downloading… ${(info.loaded/1048576).toFixed(1)} / ${(info.total/1048576).toFixed(1)} MB`);
-    }
-    if (info.status === 'ready') setProg(95, 'Almost ready…');
-  };
-
-  async function loadModel(id) {
-    if (loading) return;
-    loading = true;
-    currentPipe = null; currentModel = null; currentProcessor = null;
-    runBtn.disabled = true;
-    const info = MODELS[id];
-    setSt(`Loading ${info.label}… (cached after first download)`, 'loading');
-    setProg(5, 'Starting…');
-    try {
-      if (info.type === 'pipeline') {
-        currentPipe = await pipeline('image-segmentation', id, { device: 'wasm', progress_callback: progCb });
-      } else {
-        [currentModel, currentProcessor] = await Promise.all([
-          AutoModel.from_pretrained(id, { device: 'wasm', dtype: 'fp32', progress_callback: progCb }),
-          AutoProcessor.from_pretrained(id)
-        ]);
+<!-- Load Transformers.js first as a regular script (Safari-safe, no type=module needed) -->
+<script src="https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.5.0/dist/transformers.min.js"></script>
+<script>
+(function() {
+  // Wait for Transformers.js to be ready
+  function waitForLib(cb) {
+    if (window.transformers && window.transformers.pipeline) {
+      cb(window.transformers);
+    } else if (window.Transformers) {
+      cb(window.Transformers);
+    } else {
+      // Try common export names
+      var tryNames = ['transformers','Transformers','TransformersJS'];
+      for (var i = 0; i < tryNames.length; i++) {
+        if (window[tryNames[i]]) { cb(window[tryNames[i]]); return; }
       }
-      setProg(100, 'Ready!');
-      setTimeout(hideProg, 700);
-      setSt(`${info.label} ready ✓ — drop an image to start`, 'ready');
-      if (srcImg) runBtn.disabled = false;
-    } catch(e) {
-      console.error('[BGRemover] Load error:', e);
-      setSt('Load failed: ' + e.message, 'error');
-      hideProg();
-    } finally { loading = false; }
+      setTimeout(function(){ waitForLib(cb); }, 100);
+    }
   }
 
-  document.querySelectorAll('#bgr-cards .bcard').forEach(card => {
-    card.addEventListener('click', () => {
-      if (loading) return;
-      document.querySelectorAll('#bgr-cards .bcard').forEach(c => c.classList.remove('active'));
-      card.classList.add('active');
-      currentModelId = card.dataset.model;
-      outView.innerHTML = '<div class="bph">Result will appear here</div>';
-      outCanvas = null; dlBtn.disabled = true;
-      loadModel(currentModelId);
-    });
-  });
+  waitForLib(function(T) {
+    var pipeline      = T.pipeline;
+    var AutoModel     = T.AutoModel;
+    var AutoProcessor = T.AutoProcessor;
+    var RawImage      = T.RawImage;
+    var env           = T.env;
 
-  // ── File handler — stable on mobile & desktop ────────────────────────────────
-  const handleFile = file => {
-    if (!file || !file.type.startsWith('image/')) return;
+    if (env) env.allowLocalModels = false;
 
-    // Revoke previous URL
-    if (srcImg && srcImg._blobUrl) URL.revokeObjectURL(srcImg._blobUrl);
-
-    srcFile = file;
-    const url = URL.createObjectURL(file);
-    const img = new Image();
-
-    img.onload = () => {
-      img._blobUrl = url;
-      srcImg = img;
-      inView.innerHTML = '';
-      const el = document.createElement('img');
-      el.src = url;
-      el.style.cssText = 'max-height:clamp(200px,40vw,300px);max-width:100%;display:block;';
-      inView.appendChild(el);
-      outView.innerHTML = '<div class="bph">Press ⚡ Remove Background</div>';
-      outCanvas = null; dlBtn.disabled = true;
-      runBtn.disabled = !(currentPipe || currentModel);
-      resetBtn.disabled = false;
-      // Scroll to button on mobile
-      if (window.innerWidth < 640) {
-        setTimeout(() => runBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 300);
-      }
+    var MODELS = {
+      'briaai/RMBG-1.4': { type: 'pipeline',   label: 'RMBG-1.4' },
+      'Xenova/modnet':   { type: 'automodel',   label: 'MODNet'   }
     };
 
-    img.onerror = () => { URL.revokeObjectURL(url); setSt('Image load failed.', 'error'); };
-    img.src = url;
-  };
+    var currentPipe = null, currentModel = null, currentProcessor = null;
+    var currentModelId = 'briaai/RMBG-1.4';
+    var srcFile = null, srcImg = null, outCanvas = null;
+    var loading = false;
 
-  // ── Drop zone events — mobile-safe ──────────────────────────────────────────
+    function $(id) { return document.getElementById(id); }
+    var drop    = $('bgr-drop'), fi      = $('bgr-fi');
+    var runBtn  = $('bgr-run'),  resetBtn = $('bgr-reset'), dlBtn = $('bgr-dl');
+    var dot     = $('bgr-d'),    stxt    = $('bgr-t'),     sbar  = $('bgr-s');
+    var pw      = $('bgr-pw'),   pf      = $('bgr-pf'),    pl    = $('bgr-pl');
+    var inView  = $('bgr-in'),   outView = $('bgr-out');
 
-  // File input change — most reliable on all devices
-  fi.addEventListener('change', e => {
-    const file = e.target.files && e.target.files[0];
-    if (file) handleFile(file);
-    fi.value = ''; // allow re-selecting same file
-  });
+    function setSt(msg, state) {
+      stxt.textContent = msg; stxt.className = 'bt on';
+      dot.className = 'bd ' + state;
+      sbar.className = 'bs' + (state==='ready' ? ' ok' : state==='error' ? ' err' : '');
+    }
+    function setProg(pct, lbl) {
+      pw.classList.add('on');
+      pf.style.width = pct + '%';
+      pl.textContent = lbl || (pct + '%');
+    }
+    function hideProg() { pw.classList.remove('on'); pf.style.width = '0'; }
 
-  // Drag & drop — desktop only (dragenter/dragleave child-aware)
-  drop.addEventListener('dragenter', e => { e.preventDefault(); drop.classList.add('over'); });
-  drop.addEventListener('dragover',  e => { e.preventDefault(); });
-  drop.addEventListener('dragleave', e => {
-    if (!drop.contains(e.relatedTarget)) drop.classList.remove('over');
-  });
-  drop.addEventListener('drop', e => {
-    e.preventDefault(); drop.classList.remove('over');
-    const file = e.dataTransfer.files && e.dataTransfer.files[0];
-    if (file) handleFile(file);
-  });
+    function progCb(info) {
+      if (info.status === 'progress' && info.total) {
+        var pct = Math.round(info.loaded / info.total * 82) + 5;
+        setProg(pct, 'Downloading… ' + (info.loaded/1048576).toFixed(1) + ' / ' + (info.total/1048576).toFixed(1) + ' MB');
+      }
+      if (info.status === 'ready') setProg(95, 'Almost ready…');
+    }
 
-  // Paste from clipboard (bonus)
-  document.addEventListener('paste', e => {
-    const item = Array.from(e.clipboardData.items || []).find(i => i.type.startsWith('image/'));
-    if (item) handleFile(item.getAsFile());
-  });
+    function loadModel(id) {
+      if (loading) return;
+      loading = true;
+      currentPipe = null; currentModel = null; currentProcessor = null;
+      runBtn.disabled = true;
+      var info = MODELS[id];
+      setSt('Loading ' + info.label + '… (cached after first download)', 'loading');
+      setProg(5, 'Starting…');
 
-
-  runBtn.addEventListener('click', async () => {
-    if (!(currentPipe || currentModel) || !srcImg || !srcFile) return;
-    runBtn.classList.add('proc'); runBtn.disabled = true;
-    resetBtn.disabled = true; dlBtn.disabled = true;
-    const info = MODELS[currentModelId];
-    setSt(`${info.label}: processing…`, 'loading');
-    setProg(10, 'Preparing image…');
-    try {
-      await new Promise(r => setTimeout(r, 30));
-      const W = srcImg.naturalWidth, H = srcImg.naturalHeight;
-      outCanvas = document.createElement('canvas');
-      outCanvas.width = W; outCanvas.height = H;
-      const ctx = outCanvas.getContext('2d');
-      ctx.drawImage(srcImg, 0, 0);
-      const imgData = ctx.getImageData(0, 0, W, H);
-
+      var p;
       if (info.type === 'pipeline') {
-        const objectUrl = URL.createObjectURL(srcFile);
-        setProg(30, 'Running RMBG-1.4…');
-        setSt('RMBG-1.4 segmentation…', 'loading');
-        await new Promise(r => setTimeout(r, 20));
-        const result = await currentPipe(objectUrl, { threshold: 0.5, mask_threshold: 0.5, overlap_mask_area_threshold: 0.8 });
-        URL.revokeObjectURL(objectUrl);
-        setProg(78, 'Applying mask…');
-        await new Promise(r => setTimeout(r, 20));
-        const maskImg = result[0].mask;
-        const mc = document.createElement('canvas');
-        mc.width = maskImg.width; mc.height = maskImg.height;
-        const mCtx = mc.getContext('2d');
-        const mRaw = mCtx.createImageData(maskImg.width, maskImg.height);
-        for (let i = 0; i < maskImg.data.length; i++) {
-          const v = maskImg.data[i];
-          mRaw.data[i*4]=v; mRaw.data[i*4+1]=v; mRaw.data[i*4+2]=v; mRaw.data[i*4+3]=255;
-        }
-        mCtx.putImageData(mRaw, 0, 0);
-        const ms = document.createElement('canvas');
-        ms.width = W; ms.height = H;
-        ms.getContext('2d').drawImage(mc, 0, 0, W, H);
-        const maskPixels = ms.getContext('2d').getImageData(0, 0, W, H).data;
-        for (let i = 0; i < W*H; i++) imgData.data[i*4+3] = maskPixels[i*4];
+        p = pipeline('image-segmentation', id, { device: 'wasm', progress_callback: progCb })
+          .then(function(pipe) { currentPipe = pipe; });
       } else {
-        const rawImage = await RawImage.fromBlob(srcFile);
-        setProg(30, 'Running MODNet…');
-        setSt('MODNet segmentation…', 'loading');
-        await new Promise(r => setTimeout(r, 20));
-        const { pixel_values } = await currentProcessor(rawImage);
-        setProg(55, 'Forward pass…');
-        await new Promise(r => setTimeout(r, 20));
-        const { output } = await currentModel({ input: pixel_values });
-        setProg(78, 'Applying mask…');
-        await new Promise(r => setTimeout(r, 20));
-        const mask = await RawImage.fromTensor(output[0].mul(255).to('uint8')).resize(W, H);
-        for (let i = 0; i < W*H; i++) imgData.data[i*4+3] = mask.data[i];
+        p = Promise.all([
+          AutoModel.from_pretrained(id, { device: 'wasm', dtype: 'fp32', progress_callback: progCb }),
+          AutoProcessor.from_pretrained(id)
+        ]).then(function(res) { currentModel = res[0]; currentProcessor = res[1]; });
       }
 
-      ctx.putImageData(imgData, 0, 0);
-      setProg(100, 'Done!');
-      setTimeout(hideProg, 600);
-      outView.innerHTML = '';
-      outCanvas.style.cssText = 'max-height:clamp(200px,40vw,300px);max-width:100%';
-      outView.appendChild(outCanvas);
-      dlBtn.disabled = false;
-      setSt('Background removed ✓', 'ready');
-    } catch(e) {
-      console.error('[BGRemover] Inference error:', e);
-      setSt('Error: ' + (e.message || String(e)), 'error');
-      hideProg();
-    } finally {
-      runBtn.classList.remove('proc');
-      runBtn.disabled = false;
-      resetBtn.disabled = false;
+      p.then(function() {
+        setProg(100, 'Ready!');
+        setTimeout(hideProg, 700);
+        setSt(info.label + ' ready ✓ — tap image area to start', 'ready');
+        if (srcImg) runBtn.disabled = false;
+      }).catch(function(e) {
+        console.error('[BGRemover] Load error:', e);
+        setSt('Load failed: ' + (e.message || e), 'error');
+        hideProg();
+      }).finally(function() { loading = false; });
     }
-  });
 
-  dlBtn.addEventListener('click', () => {
-    if (!outCanvas) return;
-    const a = document.createElement('a');
-    a.download = 'removed-bg.png';
-    a.href = outCanvas.toDataURL('image/png');
-    a.click();
-  });
+    // Model card switching
+    var cards = document.querySelectorAll('#bgr-cards .bcard');
+    cards.forEach(function(card) {
+      card.addEventListener('click', function() {
+        if (loading) return;
+        cards.forEach(function(c) { c.classList.remove('active'); });
+        card.classList.add('active');
+        currentModelId = card.dataset.model;
+        outView.innerHTML = '<div class="bph">Result will appear here</div>';
+        outCanvas = null; dlBtn.disabled = true;
+        loadModel(currentModelId);
+      });
+    });
 
-  resetBtn.addEventListener('click', () => {
-    srcImg = null; srcFile = null; outCanvas = null;
-    inView.innerHTML  = '<div class="bph">No image loaded</div>';
-    outView.innerHTML = '<div class="bph">Result will appear here</div>';
-    fi.value = ''; runBtn.disabled = true; resetBtn.disabled = true; dlBtn.disabled = true;
-    hideProg();
-    if (currentPipe || currentModel) setSt(MODELS[currentModelId].label + ' ready ✓ — drop an image to start', 'ready');
-  });
+    // File handler
+    function handleFile(file) {
+      if (!file || !file.type.startsWith('image/')) return;
+      if (srcImg && srcImg._blobUrl) URL.revokeObjectURL(srcImg._blobUrl);
+      srcFile = file;
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function() {
+        img._blobUrl = url;
+        srcImg = img;
+        inView.innerHTML = '';
+        var el = document.createElement('img');
+        el.src = url;
+        el.style.cssText = 'max-height:clamp(200px,40vw,300px);max-width:100%;display:block;';
+        inView.appendChild(el);
+        outView.innerHTML = '<div class="bph">Press ⚡ Remove Background</div>';
+        outCanvas = null; dlBtn.disabled = true;
+        runBtn.disabled = !(currentPipe || currentModel);
+        resetBtn.disabled = false;
+        if (window.innerWidth < 640) {
+          setTimeout(function() {
+            runBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }, 300);
+        }
+      };
+      img.onerror = function() {
+        URL.revokeObjectURL(url);
+        setSt('Image load failed. Try another file.', 'error');
+      };
+      img.src = url;
+    }
 
-  loadModel(currentModelId);
+    // File input — overlay approach, no fi.click() needed (Safari-safe)
+    fi.addEventListener('change', function(e) {
+      var file = e.target.files && e.target.files[0];
+      if (file) handleFile(file);
+      try { fi.value = ''; } catch(ex) {}
+    });
+
+    // Drag & drop (desktop)
+    drop.addEventListener('dragenter', function(e) { e.preventDefault(); drop.classList.add('over'); });
+    drop.addEventListener('dragover',  function(e) { e.preventDefault(); });
+    drop.addEventListener('dragleave', function(e) {
+      if (!drop.contains(e.relatedTarget)) drop.classList.remove('over');
+    });
+    drop.addEventListener('drop', function(e) {
+      e.preventDefault(); drop.classList.remove('over');
+      var file = e.dataTransfer.files && e.dataTransfer.files[0];
+      if (file) handleFile(file);
+    });
+
+    // Paste from clipboard
+    document.addEventListener('paste', function(e) {
+      var items = Array.prototype.slice.call(e.clipboardData.items || []);
+      var imgItem = items.filter(function(i) { return i.type.startsWith('image/'); })[0];
+      if (imgItem) handleFile(imgItem.getAsFile());
+    });
+
+    // Remove Background
+    runBtn.addEventListener('click', function() {
+      if (!(currentPipe || currentModel) || !srcImg || !srcFile) return;
+      runBtn.classList.add('proc'); runBtn.disabled = true;
+      resetBtn.disabled = true; dlBtn.disabled = true;
+      var info = MODELS[currentModelId];
+      setSt(info.label + ': processing…', 'loading');
+      setProg(10, 'Preparing image…');
+
+      setTimeout(function() {
+        var W = srcImg.naturalWidth, H = srcImg.naturalHeight;
+        outCanvas = document.createElement('canvas');
+        outCanvas.width = W; outCanvas.height = H;
+        var ctx = outCanvas.getContext('2d');
+        ctx.drawImage(srcImg, 0, 0);
+        var imgData = ctx.getImageData(0, 0, W, H);
+        var p;
+
+        if (info.type === 'pipeline') {
+          var objectUrl = URL.createObjectURL(srcFile);
+          setProg(30, 'Running RMBG-1.4…');
+          setSt('RMBG-1.4 segmentation…', 'loading');
+          p = currentPipe(objectUrl, { threshold: 0.5, mask_threshold: 0.5, overlap_mask_area_threshold: 0.8 })
+            .then(function(result) {
+              URL.revokeObjectURL(objectUrl);
+              setProg(78, 'Applying mask…');
+              var maskImg = result[0].mask;
+              var mc = document.createElement('canvas');
+              mc.width = maskImg.width; mc.height = maskImg.height;
+              var mCtx = mc.getContext('2d');
+              var mRaw = mCtx.createImageData(maskImg.width, maskImg.height);
+              for (var i = 0; i < maskImg.data.length; i++) {
+                var v = maskImg.data[i];
+                mRaw.data[i*4]=v; mRaw.data[i*4+1]=v; mRaw.data[i*4+2]=v; mRaw.data[i*4+3]=255;
+              }
+              mCtx.putImageData(mRaw, 0, 0);
+              var ms = document.createElement('canvas');
+              ms.width = W; ms.height = H;
+              ms.getContext('2d').drawImage(mc, 0, 0, W, H);
+              var mp = ms.getContext('2d').getImageData(0, 0, W, H).data;
+              for (var j = 0; j < W*H; j++) imgData.data[j*4+3] = mp[j*4];
+            });
+        } else {
+          setProg(30, 'Running MODNet…');
+          setSt('MODNet segmentation…', 'loading');
+          p = RawImage.fromBlob(srcFile).then(function(rawImage) {
+            return currentProcessor(rawImage);
+          }).then(function(processed) {
+            setProg(55, 'Forward pass…');
+            return currentModel({ input: processed.pixel_values });
+          }).then(function(outputs) {
+            setProg(78, 'Applying mask…');
+            return RawImage.fromTensor(outputs.output[0].mul(255).to('uint8')).resize(W, H);
+          }).then(function(mask) {
+            for (var i = 0; i < W*H; i++) imgData.data[i*4+3] = mask.data[i];
+          });
+        }
+
+        p.then(function() {
+          ctx.putImageData(imgData, 0, 0);
+          setProg(100, 'Done!');
+          setTimeout(hideProg, 600);
+          outView.innerHTML = '';
+          outCanvas.style.cssText = 'max-height:clamp(200px,40vw,300px);max-width:100%';
+          outView.appendChild(outCanvas);
+          dlBtn.disabled = false;
+          setSt('Background removed ✓', 'ready');
+        }).catch(function(e) {
+          console.error('[BGRemover] Inference error:', e);
+          setSt('Error: ' + (e.message || String(e)), 'error');
+          hideProg();
+        }).finally(function() {
+          runBtn.classList.remove('proc');
+          runBtn.disabled = false;
+          resetBtn.disabled = false;
+        });
+      }, 30);
+    });
+
+    // Download
+    dlBtn.addEventListener('click', function() {
+      if (!outCanvas) return;
+      var a = document.createElement('a');
+      a.download = 'removed-bg.png';
+      a.href = outCanvas.toDataURL('image/png');
+      a.click();
+    });
+
+    // Reset
+    resetBtn.addEventListener('click', function() {
+      srcImg = null; srcFile = null; outCanvas = null;
+      inView.innerHTML  = '<div class="bph">No image loaded</div>';
+      outView.innerHTML = '<div class="bph">Result will appear here</div>';
+      try { fi.value = ''; } catch(ex) {}
+      runBtn.disabled = true; resetBtn.disabled = true; dlBtn.disabled = true;
+      hideProg();
+      if (currentPipe || currentModel)
+        setSt(MODELS[currentModelId].label + ' ready ✓ — tap image area to start', 'ready');
+    });
+
+    // Boot
+    loadModel(currentModelId);
+  });
 })();
 </script>
+</body>
+</html>
