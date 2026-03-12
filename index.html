@@ -29,6 +29,7 @@
       border: 2px solid #ddd8ce; border-radius: 12px;
       padding: clamp(10px,2.5vw,13px) clamp(10px,2.5vw,15px);
       cursor: pointer; transition: border-color .2s, box-shadow .2s; background: #fff;
+      -webkit-tap-highlight-color: transparent;
     }
     .bcard:hover  { border-color: #e8553a; }
     .bcard.active { border-color: #e8553a; box-shadow: 0 0 0 3px rgba(232,85,58,.12); }
@@ -43,6 +44,7 @@
     .bcard-size::before { content:''; display:inline-block; width:5px; height:5px; border-radius:50%; background:#d0c8bc; flex-shrink:0; }
     .bcard.active .bcard-size::before { background: #e8553a; }
 
+    /* ── status bar ── */
     .bs {
       display: flex; align-items: center; gap: 10px;
       background: #fff; border: 1.5px solid #ddd8ce; border-radius: 10px;
@@ -59,27 +61,42 @@
     .bt { color: #a09880; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .bt.on { color: #2d2a26; }
 
+    /* ── progress bar ── */
     .bpw { margin-bottom: 12px; display: none; }
     .bpw.on { display: block; }
-    .bpb { background: #ddd8ce; border-radius: 99px; height: 4px; overflow: hidden; }
-    .bpf { height: 100%; background: #e8553a; border-radius: 99px; width: 0; transition: width .4s ease; }
-    .bpl { font-size: 10px; color: #a09880; font-family: monospace; text-align: right; margin-top: 4px; }
+    .bpb { background: #ddd8ce; border-radius: 99px; height: 6px; overflow: hidden; }
+    .bpf {
+      height: 100%; background: #e8553a; border-radius: 99px;
+      width: 0; transition: width .35s ease;
+    }
+    .bpl {
+      font-size: 11px; color: #5a5248; font-family: monospace;
+      text-align: right; margin-top: 5px; font-weight: 600;
+    }
 
+    /* ── drop zone — label wraps input, NO position:absolute ── */
     .bdrop {
-      position: relative; overflow: hidden;
+      display: block;              /* label as block */
+      cursor: pointer;
       border: 2px dashed #c8c0b4; border-radius: 12px;
       padding: clamp(22px,5vw,36px) 16px; text-align: center;
       transition: border-color .2s, background .2s;
       background: #e8e2d8; margin-bottom: 14px;
       -webkit-tap-highlight-color: transparent;
+      user-select: none; -webkit-user-select: none;
     }
     .bdrop:hover, .bdrop.over { border-color: #e8553a; background: #fdf5f2; }
-    .bdrop .bi, .bdrop h3, .bdrop p { pointer-events: none; position: relative; z-index: 1; }
+    /* hide native input completely but keep it accessible */
+    .bdrop input[type=file] {
+      position: fixed; top: -9999px; left: -9999px;
+      width: 1px; height: 1px; opacity: 0;
+    }
     .bdrop .bi { font-size: clamp(26px,6vw,34px); margin-bottom: 8px; display: block; }
     .bdrop h3  { font-size: clamp(13px,3vw,14px); font-weight: 700; color: #e8553a; margin-bottom: 5px; }
     .bdrop p   { font-size: clamp(11px,2.5vw,12px); color: #8a8070; }
     .bdrop p em { color: #e8553a; font-style: normal; font-weight: 600; }
 
+    /* ── preview grid ── */
     .bgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
     @media(max-width:560px){ .bgrid { grid-template-columns: 1fr; gap: 10px; } }
 
@@ -101,27 +118,27 @@
     .bview img, .bview canvas { max-width: 100%; max-height: clamp(200px,40vw,300px); display: block; object-fit: contain; }
     .bph { color: #c0b8ac; font-size: 12px; text-align: center; padding: 14px; line-height: 1.6; }
 
+    /* ── buttons ── */
     .brow { display: flex; gap: 8px; flex-wrap: wrap; }
     @media(max-width:400px){ .brow { flex-direction: column; } .brow button { width: 100%; justify-content: center; } }
-
     button {
       font-family: 'Segoe UI', system-ui, sans-serif;
       font-size: clamp(12px,3vw,13px); font-weight: 700;
       border: none; border-radius: 8px;
       padding: clamp(9px,2.5vw,11px) clamp(14px,3vw,20px);
-      cursor: pointer; transition: background .18s, opacity .18s;
+      cursor: pointer; transition: background .15s, opacity .15s;
       display: inline-flex; align-items: center; gap: 6px;
       white-space: nowrap; -webkit-tap-highlight-color: transparent;
     }
-    #bgr-run  { background: #e8553a; color: #fff; box-shadow: 0 2px 8px rgba(232,85,58,.3); }
-    #bgr-run:active:not(:disabled) { background: #d44a2f; }
-    #bgr-run:disabled  { opacity: .45; cursor: not-allowed; }
+    #bgr-run   { background: #e8553a; color: #fff; box-shadow: 0 2px 8px rgba(232,85,58,.3); }
+    #bgr-run:active:not(:disabled)   { background: #d44a2f; }
+    #bgr-run:disabled   { opacity: .45; cursor: not-allowed; }
     #bgr-reset { background: #fff; color: #5a5248; border: 1.5px solid #ddd8ce; }
     #bgr-reset:active:not(:disabled) { border-color: #e8553a; color: #e8553a; }
     #bgr-reset:disabled { opacity: .4; cursor: not-allowed; }
-    #bgr-dl  { background: #fff; color: #e8553a; border: 1.5px solid #e8553a; }
-    #bgr-dl:active:not(:disabled) { background: #fdf5f2; }
-    #bgr-dl:disabled { opacity: .4; cursor: not-allowed; }
+    #bgr-dl    { background: #fff; color: #e8553a; border: 1.5px solid #e8553a; }
+    #bgr-dl:active:not(:disabled)    { background: #fdf5f2; }
+    #bgr-dl:disabled    { opacity: .4; cursor: not-allowed; }
 
     .bspin {
       width: 13px; height: 13px;
@@ -173,13 +190,19 @@
     <div class="bpl" id="bgr-pl">0%</div>
   </div>
 
-  <div class="bdrop" id="bgr-drop">
-    <input type="file" id="bgr-fi" accept="image/*"
-      style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;z-index:2;"/>
+  <!--
+    KEY FIX: <label> wraps <input type=file>
+    - input is position:fixed top:-9999px (fully off-screen, NOT display:none)
+    - label click → triggers input natively, NO JavaScript .click() needed
+    - iOS Safari ✅  Android Chrome ✅  Desktop ✅
+    - No page reload, no form submit
+  -->
+  <label class="bdrop" id="bgr-drop" for="bgr-fi">
+    <input type="file" id="bgr-fi" accept="image/*"/>
     <span class="bi">🖼️</span>
     <h3>Tap here to select image</h3>
-    <p>PNG · JPG · WebP supported</p>
-  </div>
+    <p>PNG · JPG · WebP</p>
+  </label>
 
   <div class="bgrid">
     <div class="bpane">
@@ -206,226 +229,293 @@
 </div>
 
 <script>
-// ── Use ESM via a blob URL — works on Safari without type=module on the page ──
-var ESM_SRC = 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.5.0/dist/transformers.min.js';
+// Blob URL trick: inject ESM module without page needing type=module
+// Works on Safari, iOS, Android — avoids CSP issues on Blogger
+var CDN = 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.5.0/dist/transformers.min.js';
 
-var esmCode = `
-import { pipeline, AutoModel, AutoProcessor, RawImage, env }
-  from '${ESM_SRC}';
-
+var code = `
+import { pipeline, AutoModel, AutoProcessor, RawImage, env } from '${CDN}';
 env.allowLocalModels = false;
 
 const MODELS = {
-  'briaai/RMBG-1.4': { type:'pipeline',   label:'RMBG-1.4' },
-  'Xenova/modnet':   { type:'automodel',  label:'MODNet'   }
+  'briaai/RMBG-1.4': { type:'pipeline',  label:'RMBG-1.4' },
+  'Xenova/modnet':   { type:'automodel', label:'MODNet'   }
 };
 
 let currentPipe=null, currentModel=null, currentProcessor=null;
 let currentModelId='briaai/RMBG-1.4';
 let srcFile=null, srcImg=null, outCanvas=null, loading=false;
 
-const $  = id => document.getElementById(id);
-const drop=  $('bgr-drop'), fi=$('bgr-fi');
+const $    = id => document.getElementById(id);
+const drop = $('bgr-drop'), fi = $('bgr-fi');
 const runBtn=$('bgr-run'), resetBtn=$('bgr-reset'), dlBtn=$('bgr-dl');
 const dot=$('bgr-d'), stxt=$('bgr-t'), sbar=$('bgr-s');
 const pw=$('bgr-pw'), pf=$('bgr-pf'), pl=$('bgr-pl');
 const inView=$('bgr-in'), outView=$('bgr-out');
 
-const setSt=(msg,state)=>{
-  stxt.textContent=msg; stxt.className='bt on';
-  dot.className='bd '+state;
-  sbar.className='bs'+(state==='ready'?' ok':state==='error'?' err':'');
+// ── UI helpers ────────────────────────────────────────────────────────────────
+const setSt = (msg, state) => {
+  stxt.textContent = msg; stxt.className = 'bt on';
+  dot.className = 'bd ' + state;
+  sbar.className = 'bs' + (state==='ready'?' ok':state==='error'?' err':'');
 };
-const setProg=(pct,lbl)=>{ pw.classList.add('on'); pf.style.width=pct+'%'; pl.textContent=lbl||pct+'%'; };
-const hideProg=()=>{ pw.classList.remove('on'); pf.style.width='0'; };
 
-const progCb=info=>{
-  if(info.status==='progress'&&info.total){
-    const pct=Math.round(info.loaded/info.total*82)+5;
-    setProg(pct,'Downloading… '+(info.loaded/1048576).toFixed(1)+' / '+(info.total/1048576).toFixed(1)+' MB');
+// Two-line progress: bar + label
+// label = "Downloading model… 12.3 / 45.0 MB  27%"
+//       = "Processing image…"  etc.
+const setProg = (pct, lbl) => {
+  pw.classList.add('on');
+  pf.style.width = pct + '%';
+  pl.textContent  = lbl ? lbl + '  ' + pct + '%' : pct + '%';
+};
+const hideProg = () => { pw.classList.remove('on'); pf.style.width = '0'; pl.textContent = ''; };
+
+// ── Model download progress ───────────────────────────────────────────────────
+const progCb = info => {
+  if (info.status === 'initiate') {
+    setProg(2, 'Starting download…');
   }
-  if(info.status==='ready') setProg(95,'Almost ready…');
+  if (info.status === 'progress' && info.total) {
+    const pct  = Math.min(95, Math.round(info.loaded / info.total * 92) + 3);
+    const done = (info.loaded / 1048576).toFixed(1);
+    const tot  = (info.total  / 1048576).toFixed(1);
+    setProg(pct, 'Downloading model… ' + done + ' / ' + tot + ' MB');
+  }
+  if (info.status === 'ready') setProg(98, 'Preparing model…');
 };
 
-async function loadModel(id){
-  if(loading) return;
-  loading=true;
-  currentPipe=null; currentModel=null; currentProcessor=null;
-  runBtn.disabled=true;
-  const info=MODELS[id];
-  setSt('Loading '+info.label+'… (cached after first download)','loading');
-  setProg(5,'Starting…');
-  try{
-    if(info.type==='pipeline'){
-      currentPipe=await pipeline('image-segmentation',id,{device:'wasm',progress_callback:progCb});
+// ── Load AI model ─────────────────────────────────────────────────────────────
+async function loadModel(id) {
+  if (loading) return;
+  loading = true;
+  currentPipe = null; currentModel = null; currentProcessor = null;
+  runBtn.disabled = true;
+  const info = MODELS[id];
+  setSt('Loading ' + info.label + '…', 'loading');
+  setProg(2, 'Connecting…');
+  try {
+    if (info.type === 'pipeline') {
+      currentPipe = await pipeline('image-segmentation', id, {
+        device: 'wasm', progress_callback: progCb
+      });
     } else {
-      [currentModel,currentProcessor]=await Promise.all([
-        AutoModel.from_pretrained(id,{device:'wasm',dtype:'fp32',progress_callback:progCb}),
+      [currentModel, currentProcessor] = await Promise.all([
+        AutoModel.from_pretrained(id, { device:'wasm', dtype:'fp32', progress_callback: progCb }),
         AutoProcessor.from_pretrained(id)
       ]);
     }
-    setProg(100,'Ready!');
-    setTimeout(hideProg,700);
-    setSt(info.label+' ready ✓ — tap image area to start','ready');
-    if(srcImg) runBtn.disabled=false;
-  } catch(e){
-    console.error('[BGRemover] Load error:',e);
-    setSt('Load failed: '+(e.message||e),'error');
+    setProg(100, 'Ready!');
+    setTimeout(hideProg, 800);
+    setSt(info.label + ' ready ✓  —  tap image area to start', 'ready');
+    if (srcImg) runBtn.disabled = false;
+  } catch(e) {
+    console.error('[BGRemover] Load error:', e);
+    setSt('Load failed: ' + (e.message || e), 'error');
     hideProg();
-  } finally { loading=false; }
+  } finally { loading = false; }
 }
 
-document.querySelectorAll('#bgr-cards .bcard').forEach(card=>{
-  card.addEventListener('click',()=>{
-    if(loading) return;
-    document.querySelectorAll('#bgr-cards .bcard').forEach(c=>c.classList.remove('active'));
+// ── Model card switch ─────────────────────────────────────────────────────────
+document.querySelectorAll('#bgr-cards .bcard').forEach(card => {
+  card.addEventListener('click', () => {
+    if (loading) return;
+    document.querySelectorAll('#bgr-cards .bcard').forEach(c => c.classList.remove('active'));
     card.classList.add('active');
-    currentModelId=card.dataset.model;
-    outView.innerHTML='<div class="bph">Result will appear here</div>';
-    outCanvas=null; dlBtn.disabled=true;
+    currentModelId = card.dataset.model;
+    outView.innerHTML = '<div class="bph">Result will appear here</div>';
+    outCanvas = null; dlBtn.disabled = true;
     loadModel(currentModelId);
   });
 });
 
-function handleFile(file){
-  if(!file||!file.type.startsWith('image/')) return;
-  if(srcImg&&srcImg._blobUrl) URL.revokeObjectURL(srcImg._blobUrl);
-  srcFile=file;
-  const url=URL.createObjectURL(file);
-  const img=new Image();
-  img.onload=()=>{
-    img._blobUrl=url; srcImg=img;
-    inView.innerHTML='';
-    const el=document.createElement('img');
-    el.src=url; el.style.cssText='max-height:clamp(200px,40vw,300px);max-width:100%;display:block;';
-    inView.appendChild(el);
-    outView.innerHTML='<div class="bph">Press ⚡ Remove Background</div>';
-    outCanvas=null; dlBtn.disabled=true;
-    runBtn.disabled=!(currentPipe||currentModel);
-    resetBtn.disabled=false;
-    if(window.innerWidth<640) setTimeout(()=>runBtn.scrollIntoView({behavior:'smooth',block:'nearest'}),300);
+// ── File handler ──────────────────────────────────────────────────────────────
+function handleFile(file) {
+  if (!file || !file.type.startsWith('image/')) return;
+  if (srcImg && srcImg._blobUrl) URL.revokeObjectURL(srcImg._blobUrl);
+  srcFile = file;
+
+  // Show reading progress immediately
+  setSt('Reading image…', 'loading');
+  setProg(10, 'Reading image…');
+
+  const reader = new FileReader();
+  reader.onprogress = e => {
+    if (e.lengthComputable) {
+      const pct = Math.round(e.loaded / e.total * 80) + 10;
+      const kb  = (e.loaded / 1024).toFixed(0);
+      const tot = (e.total  / 1024).toFixed(0);
+      setProg(pct, 'Reading image… ' + kb + ' / ' + tot + ' KB');
+    }
   };
-  img.onerror=()=>{ URL.revokeObjectURL(url); setSt('Image load failed.','error'); };
-  img.src=url;
+  reader.onload = ev => {
+    setProg(95, 'Decoding image…');
+    const img = new Image();
+    img.onload = () => {
+      // Also store a blob URL for pipeline usage later
+      img._blobUrl = URL.createObjectURL(file);
+      srcImg = img;
+      setProg(100, 'Image ready!');
+      setTimeout(hideProg, 500);
+
+      inView.innerHTML = '';
+      const el = document.createElement('img');
+      el.src = ev.target.result;
+      el.style.cssText = 'max-height:clamp(200px,40vw,300px);max-width:100%;display:block;';
+      inView.appendChild(el);
+
+      outView.innerHTML = '<div class="bph">Press ⚡ Remove Background</div>';
+      outCanvas = null; dlBtn.disabled = true;
+      runBtn.disabled = !(currentPipe || currentModel);
+      resetBtn.disabled = false;
+
+      const hasModel = currentPipe || currentModel;
+      setSt(hasModel
+        ? MODELS[currentModelId].label + ' ready ✓  —  press Remove Background'
+        : 'Image loaded — waiting for model…', hasModel ? 'ready' : 'loading');
+
+      if (window.innerWidth < 640)
+        setTimeout(() => runBtn.scrollIntoView({ behavior:'smooth', block:'nearest' }), 300);
+    };
+    img.onerror = () => { hideProg(); setSt('Image decode failed.', 'error'); };
+    img.src = ev.target.result;
+  };
+  reader.onerror = () => { hideProg(); setSt('File read failed.', 'error'); };
+  reader.readAsDataURL(file);
 }
 
-fi.addEventListener('change',e=>{
-  const file=e.target.files&&e.target.files[0];
-  if(file) handleFile(file);
-  try{ fi.value=''; } catch(ex){}
+// ── File input (label-wrapped, no JS .click() ever called) ───────────────────
+fi.addEventListener('change', e => {
+  const file = e.target.files && e.target.files[0];
+  if (file) handleFile(file);
+  try { fi.value = ''; } catch(_) {}
 });
 
-drop.addEventListener('dragenter',e=>{ e.preventDefault(); drop.classList.add('over'); });
-drop.addEventListener('dragover', e=>{ e.preventDefault(); });
-drop.addEventListener('dragleave',e=>{ if(!drop.contains(e.relatedTarget)) drop.classList.remove('over'); });
-drop.addEventListener('drop',e=>{
+// ── Drag & drop (desktop) ─────────────────────────────────────────────────────
+drop.addEventListener('dragenter', e => { e.preventDefault(); drop.classList.add('over'); });
+drop.addEventListener('dragover',  e => { e.preventDefault(); });
+drop.addEventListener('dragleave', e => { if (!drop.contains(e.relatedTarget)) drop.classList.remove('over'); });
+drop.addEventListener('drop', e => {
   e.preventDefault(); drop.classList.remove('over');
-  const file=e.dataTransfer.files&&e.dataTransfer.files[0];
-  if(file) handleFile(file);
+  const file = e.dataTransfer.files && e.dataTransfer.files[0];
+  if (file) handleFile(file);
 });
 
-document.addEventListener('paste',e=>{
-  const item=Array.from(e.clipboardData.items||[]).find(i=>i.type.startsWith('image/'));
-  if(item) handleFile(item.getAsFile());
+// ── Paste from clipboard ──────────────────────────────────────────────────────
+document.addEventListener('paste', e => {
+  const item = Array.from(e.clipboardData.items || []).find(i => i.type.startsWith('image/'));
+  if (item) handleFile(item.getAsFile());
 });
 
-runBtn.addEventListener('click',async()=>{
-  if(!(currentPipe||currentModel)||!srcImg||!srcFile) return;
-  runBtn.classList.add('proc'); runBtn.disabled=true;
-  resetBtn.disabled=true; dlBtn.disabled=true;
-  const info=MODELS[currentModelId];
-  setSt(info.label+': processing…','loading');
-  setProg(10,'Preparing image…');
-  try{
-    await new Promise(r=>setTimeout(r,30));
-    const W=srcImg.naturalWidth, H=srcImg.naturalHeight;
-    outCanvas=document.createElement('canvas');
-    outCanvas.width=W; outCanvas.height=H;
-    const ctx=outCanvas.getContext('2d');
-    ctx.drawImage(srcImg,0,0);
-    const imgData=ctx.getImageData(0,0,W,H);
+// ── Remove Background ─────────────────────────────────────────────────────────
+runBtn.addEventListener('click', async () => {
+  if (!(currentPipe || currentModel) || !srcImg || !srcFile) return;
+  runBtn.classList.add('proc'); runBtn.disabled = true;
+  resetBtn.disabled = true; dlBtn.disabled = true;
+  const info = MODELS[currentModelId];
+  setSt(info.label + ': processing…', 'loading');
+  setProg(5, 'Preparing canvas…');
 
-    if(info.type==='pipeline'){
-      const oUrl=URL.createObjectURL(srcFile);
-      setProg(30,'Running RMBG-1.4…'); setSt('RMBG-1.4 segmentation…','loading');
-      await new Promise(r=>setTimeout(r,20));
-      const result=await currentPipe(oUrl,{threshold:0.5,mask_threshold:0.5,overlap_mask_area_threshold:0.8});
-      URL.revokeObjectURL(oUrl);
-      setProg(78,'Applying mask…'); await new Promise(r=>setTimeout(r,20));
-      const maskImg=result[0].mask;
-      const mc=document.createElement('canvas');
-      mc.width=maskImg.width; mc.height=maskImg.height;
-      const mCtx=mc.getContext('2d');
-      const mRaw=mCtx.createImageData(maskImg.width,maskImg.height);
-      for(let i=0;i<maskImg.data.length;i++){
-        const v=maskImg.data[i];
+  try {
+    await new Promise(r => setTimeout(r, 30));
+    const W = srcImg.naturalWidth, H = srcImg.naturalHeight;
+    outCanvas = document.createElement('canvas');
+    outCanvas.width = W; outCanvas.height = H;
+    const ctx = outCanvas.getContext('2d');
+    ctx.drawImage(srcImg, 0, 0);
+    const imgData = ctx.getImageData(0, 0, W, H);
+
+    if (info.type === 'pipeline') {
+      setProg(20, 'Running RMBG-1.4…');
+      setSt('RMBG-1.4: analysing image…', 'loading');
+      await new Promise(r => setTimeout(r, 20));
+      const result = await currentPipe(srcImg._blobUrl, {
+        threshold: 0.5, mask_threshold: 0.5, overlap_mask_area_threshold: 0.8
+      });
+      setProg(75, 'Applying mask…');
+      await new Promise(r => setTimeout(r, 20));
+      const maskImg = result[0].mask;
+      const mc = document.createElement('canvas');
+      mc.width = maskImg.width; mc.height = maskImg.height;
+      const mCtx = mc.getContext('2d');
+      const mRaw = mCtx.createImageData(maskImg.width, maskImg.height);
+      for (let i = 0; i < maskImg.data.length; i++) {
+        const v = maskImg.data[i];
         mRaw.data[i*4]=v; mRaw.data[i*4+1]=v; mRaw.data[i*4+2]=v; mRaw.data[i*4+3]=255;
       }
-      mCtx.putImageData(mRaw,0,0);
-      const ms=document.createElement('canvas'); ms.width=W; ms.height=H;
-      ms.getContext('2d').drawImage(mc,0,0,W,H);
-      const mp=ms.getContext('2d').getImageData(0,0,W,H).data;
-      for(let i=0;i<W*H;i++) imgData.data[i*4+3]=mp[i*4];
+      mCtx.putImageData(mRaw, 0, 0);
+      const ms = document.createElement('canvas'); ms.width=W; ms.height=H;
+      ms.getContext('2d').drawImage(mc, 0, 0, W, H);
+      const mp = ms.getContext('2d').getImageData(0, 0, W, H).data;
+      for (let i = 0; i < W*H; i++) imgData.data[i*4+3] = mp[i*4];
+
     } else {
-      const rawImage=await RawImage.fromBlob(srcFile);
-      setProg(30,'Running MODNet…'); setSt('MODNet segmentation…','loading');
-      await new Promise(r=>setTimeout(r,20));
-      const {pixel_values}=await currentProcessor(rawImage);
-      setProg(55,'Forward pass…'); await new Promise(r=>setTimeout(r,20));
-      const {output}=await currentModel({input:pixel_values});
-      setProg(78,'Applying mask…'); await new Promise(r=>setTimeout(r,20));
-      const mask=await RawImage.fromTensor(output[0].mul(255).to('uint8')).resize(W,H);
-      for(let i=0;i<W*H;i++) imgData.data[i*4+3]=mask.data[i];
+      setProg(20, 'Running MODNet…');
+      setSt('MODNet: analysing image…', 'loading');
+      await new Promise(r => setTimeout(r, 20));
+      const rawImage = await RawImage.fromBlob(srcFile);
+      setProg(45, 'Processing features…');
+      const { pixel_values } = await currentProcessor(rawImage);
+      setProg(65, 'Forward pass…');
+      await new Promise(r => setTimeout(r, 20));
+      const { output } = await currentModel({ input: pixel_values });
+      setProg(80, 'Applying mask…');
+      await new Promise(r => setTimeout(r, 20));
+      const mask = await RawImage.fromTensor(output[0].mul(255).to('uint8')).resize(W, H);
+      for (let i = 0; i < W*H; i++) imgData.data[i*4+3] = mask.data[i];
     }
 
-    ctx.putImageData(imgData,0,0);
-    setProg(100,'Done!'); setTimeout(hideProg,600);
-    outView.innerHTML='';
-    outCanvas.style.cssText='max-height:clamp(200px,40vw,300px);max-width:100%';
+    setProg(92, 'Compositing…');
+    ctx.putImageData(imgData, 0, 0);
+    setProg(100, 'Done!');
+    setTimeout(hideProg, 700);
+
+    outView.innerHTML = '';
+    outCanvas.style.cssText = 'max-height:clamp(200px,40vw,300px);max-width:100%';
     outView.appendChild(outCanvas);
-    dlBtn.disabled=false;
-    setSt('Background removed ✓','ready');
-  } catch(e){
-    console.error('[BGRemover] Inference error:',e);
-    setSt('Error: '+(e.message||String(e)),'error');
+    dlBtn.disabled = false;
+    setSt('Done! Background removed ✓', 'ready');
+
+  } catch(e) {
+    console.error('[BGRemover] Inference error:', e);
+    setSt('Error: ' + (e.message || String(e)), 'error');
     hideProg();
   } finally {
     runBtn.classList.remove('proc');
-    runBtn.disabled=false; resetBtn.disabled=false;
+    runBtn.disabled = false; resetBtn.disabled = false;
   }
 });
 
-dlBtn.addEventListener('click',()=>{
-  if(!outCanvas) return;
-  const a=document.createElement('a');
-  a.download='removed-bg.png';
-  a.href=outCanvas.toDataURL('image/png');
+// ── Download ──────────────────────────────────────────────────────────────────
+dlBtn.addEventListener('click', () => {
+  if (!outCanvas) return;
+  const a = document.createElement('a');
+  a.download = 'removed-bg.png';
+  a.href = outCanvas.toDataURL('image/png');
   a.click();
 });
 
-resetBtn.addEventListener('click',()=>{
-  srcImg=null; srcFile=null; outCanvas=null;
-  inView.innerHTML='<div class="bph">No image loaded</div>';
-  outView.innerHTML='<div class="bph">Result will appear here</div>';
-  try{ fi.value=''; } catch(ex){}
-  runBtn.disabled=true; resetBtn.disabled=true; dlBtn.disabled=true;
+// ── Reset ─────────────────────────────────────────────────────────────────────
+resetBtn.addEventListener('click', () => {
+  if (srcImg && srcImg._blobUrl) URL.revokeObjectURL(srcImg._blobUrl);
+  srcImg = null; srcFile = null; outCanvas = null;
+  inView.innerHTML  = '<div class="bph">No image loaded</div>';
+  outView.innerHTML = '<div class="bph">Result will appear here</div>';
+  try { fi.value = ''; } catch(_) {}
+  runBtn.disabled = true; resetBtn.disabled = true; dlBtn.disabled = true;
   hideProg();
-  if(currentPipe||currentModel) setSt(MODELS[currentModelId].label+' ready ✓ — tap image area to start','ready');
+  if (currentPipe || currentModel)
+    setSt(MODELS[currentModelId].label + ' ready ✓  —  tap image area to start', 'ready');
 });
 
 loadModel(currentModelId);
 `;
 
-// Create blob URL from ESM code — Safari allows import() from blob URLs
-// even on pages that don't use type=module themselves
-var blob = new Blob([esmCode], { type: 'application/javascript' });
+var blob   = new Blob([code], { type: 'application/javascript' });
 var blobUrl = URL.createObjectURL(blob);
-
 var s = document.createElement('script');
 s.type = 'module';
 s.src  = blobUrl;
-s.onerror = function(e) {
-  console.error('Module load failed:', e);
+s.onerror = function() {
   document.getElementById('bgr-d').className = 'bd error';
   document.getElementById('bgr-t').textContent = 'Failed to load AI engine. Please refresh.';
   document.getElementById('bgr-s').className = 'bs err';
